@@ -1,9 +1,6 @@
 <?php
 /**
- * $Id: hacklogra_upyun.class.php 477012 2012-02-06 21:08:25Z ihacklog $
- * $Revision: 477012 $
- * $Date: 2012-02-06 21:08:25 +0000 (Sun, 18 Dec 2011) $
- * @package Hacklog Remote Attachment
+ * @package Hacklog Remote Attachment Upyun
  * @encoding UTF-8
  * @author 荒野无灯 <HuangYeWuDeng>
  * @link http://ihacklog.com
@@ -19,30 +16,30 @@ require dirname(__FILE__). '/upyun.class.php';
 
 class hacklogra_upyun
 {
-	const textdomain = 'hacklog-remote-attachment';
+	const textdomain  = 'hacklog-remote-attachment';
 	const plugin_name = 'Hacklog Remote Attachment Upyun';
 	//the same
-	const opt_space = 'hacklogra_remote_filesize';
+	const opt_space   = 'hacklogra_remote_filesize';
 	//new option name
 	const opt_primary = 'hacklogra_upyun_options';
-	const version = '1.2.9-upyun-ported-from-1.2.6-origin';
-	private static $img_ext = array('jpg', 'jpeg', 'png', 'gif', 'bmp');
-	private static $rest_user = 'admin';
-	private static $rest_pwd = '4d4173594c77453d';
-	private static $rest_server = 'v0.api.upyun.com';
-	private static $bucketname = '';
-	private static $rest_port = 80 ;
-	private static $rest_timeout = 30;
-	private static $subdir = '';
+	const version     = '1.3.0-upyun-ported-from-1.2.6-origin';
+	private static $img_ext          = array('jpg', 'jpeg', 'png', 'gif', 'bmp');
+	private static $rest_user        = 'admin';
+	private static $rest_pwd         = '4d4173594c77453d';
+	private static $rest_server      = 'v0.api.upyun.com';
+	private static $bucketname       = '';
+	private static $rest_port        = 80 ;
+	private static $rest_timeout     = 30;
+	private static $subdir           = '';
 	private static $rest_remote_path = 'wp-files';
 	private static $http_remote_path = 'wp-files';
-	private static $remote_url = '';
-	private static $remote_baseurl = '';
-	private static $local_basepath = '';
-	private static $local_path = '';
-	private static $local_url = '';
-	private static $local_baseurl = '';
-	private static $fs = null;
+	private static $remote_url       = '';
+	private static $remote_baseurl   = '';
+	private static $local_basepath   = '';
+	private static $local_path       = '';
+	private static $local_url        = '';
+	private static $local_baseurl    = '';
+	private static $fs               = null;
 
 	public function __construct()
 	{
@@ -224,7 +221,17 @@ class hacklogra_upyun
 	 */
 	private static function raise_connection_error()
 	{
-		$error_str = sprintf('%s:' . self::$fs->errors->get_error_message(), self::plugin_name);
+		$error_message = 'Unknown Error!';
+		if( self::$fs->errors->get_error_message('upyun_authentication_error') )
+		{
+			$error_message = self::$fs->errors->get_error_message('upyun_authentication_error');
+		}
+		elseif( self::$fs->errors->get_error_message('connect'))
+		{
+			$error_message = self::$fs->errors->get_error_message('connect');
+		}
+		$error_message = '<span style="color:#F00;">' . $error_message . '</span>';
+		$error_str = sprintf('%s:' . $error_message , self::plugin_name);
 		if (defined('XMLRPC_REQUEST'))
 		{
 			return self::xmlrpc_error($error_str);
@@ -401,7 +408,7 @@ class hacklogra_upyun
 		}
 	
 		//test for authentication
-		if ( !self::$fs->check_rest_connection() )
+		if ( !self::$fs->check_connection_and_authentication() )
 			return false; //There was an erorr connecting to the server.
 
 		return true;
@@ -429,12 +436,6 @@ class hacklogra_upyun
 		$current_page = basename($_SERVER['SCRIPT_FILENAME']);
 		if ('plugins.php' == $current_page)
 		{
-			//check needed php module
-			if( !function_exists('curl_init'))
-			{
-				echo 'Error: the curl php module is not available!';
-			}
-			
 			if (!self::connect_remote_server())
 			{
 				$error = self::raise_connection_error();
@@ -531,7 +532,7 @@ class hacklogra_upyun
 				}
 				else
 				{
-					return call_user_func($upload_error_handler, &$file, $error_str);
+					return call_user_func($upload_error_handler, $file, $error_str);
 				}
 			}
 		}
@@ -558,7 +559,7 @@ class hacklogra_upyun
 			}
 			else
 			{
-				return call_user_func($upload_error_handler, &$file, $error_str);
+				return call_user_func($upload_error_handler, $file, $error_str);
 			}
 		}
 		unset($content);
@@ -797,20 +798,21 @@ class hacklogra_upyun
 				$error = __('Nothing changed.', self::textdomain);
 			}
 			$credentials = array(
-				'api_domain' => $_POST['rest_server'],
-				'bucketname' => $_POST['bucketname'],
-				'username' => $_POST['rest_user'],
-				'password' => !empty($_POST['rest_pwd']) ? $_POST['rest_pwd'] : self::decrypt(self::$rest_pwd),
-				'timeout'=> 	$_POST['timeoute'],
-				'ssl' => FALSE,
+				'api_domain' => trim($_POST['rest_server']),
+				'bucketname' => trim($_POST['bucketname']),
+				'username'   => trim($_POST['rest_user']),
+				'password'   => !empty($_POST['rest_pwd']) ? trim($_POST['rest_pwd']) : self::decrypt(self::$rest_pwd),
+				'timeout'    => 	trim($_POST['timeoute']),
+				'ssl'        => FALSE,
 			);
 			if (self::setup_rest($credentials))
 			{
-				$msg .= __('Connected successfully.', self::textdomain);
+				$msg .= __('Connected and Authenticated successfully.', self::textdomain);
 			}
 			else
 			{
-				$error .= __('Failed to connect to remote server!', self::textdomain);
+				$error_arr = self::raise_connection_error();
+				$error .= $error_arr['error'];
 			}
 		}
 
@@ -954,7 +956,7 @@ class hacklogra_upyun
 		else
 		{
 			echo '<span style="color:#FF0000;">';
-			_e('Failed to connect to remote server!',self::textdomain);
+			_e('Authentication failed OR Failed to connect to remote server!',self::textdomain);
 			echo '</span>';
 		}
 		?>

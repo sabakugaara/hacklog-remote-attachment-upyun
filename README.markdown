@@ -9,7 +9,7 @@
 * Tags: attachment,manager,admin,images,thumbnail,ftp,remote
 * Requires at least: 3.3
 * Tested up to: 3.3.1
-* Stable tag: 1.2.9
+* Stable tag: 1.3.0
 
 ------------------------------------------------------------
 
@@ -44,6 +44,7 @@ For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5
 * 1.2.7 增加三种http数据发送方式支持远程附件(curl,fsockopen,streams),方便没有curl扩展支持的朋友.
 * 1.2.8 增加对xmlrpc支持(支持通过Windows Live Writer 上传图片时自动上传到Upyun服务器)
 * 1.2.9 修复Windows Live Writer 上传图片时url不正确的bug
+* 1.3.0 修复首次使用插件时，又拍云空间使用量为0时显示“测试连接失败”的bug.增加更详细的错误信息提示。
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
 [安装指导](http://ihacklog.com/?p=4993 "安装指导") 
@@ -81,6 +82,10 @@ see
 
 
 ### Changelog
+
+#### 1.3.0
+* fixed: the bug that say "Connection failed" when the bucket is empty in the first time use this plugin.
+* improved: get verbose error message displayed.
 
 #### 1.2.9
 * fixed: Windows Live Writer file uploading bug(url incorrect).

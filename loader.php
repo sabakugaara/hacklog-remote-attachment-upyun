@@ -3,18 +3,14 @@
 Plugin Name: Hacklog Remote Attachment Upyun
 Plugin URI: http://ihacklog.com/?p=5204 
 Description: WordPress 远程附件上传插件for Upyun(又拍云).Remote attachment support for WordPress.Support Multisite. 
-Version: 1.2.9 
+Version: 1.3.0 
 Author: 荒野无灯 
 Author URI: http://ihacklog.com/
 */
 
 /**
- * $Id: loader.php 477024 2011-12-18 07:24:47Z ihacklog $
- * $Revision: 477024 $
- * $Date: 2011-12-18 07:24:47 +0000 (Sun, 18 Dec 2011) $
- * 
- * @package Hacklog Remote Attachment
- *          @encoding UTF-8
+ * @package Hacklog Remote Attachment Upyun
+ * @encoding UTF-8
  * @author 荒野无灯 <HuangYeWuDeng>
  * @link http://ihacklog.com
  * @copyright Copyright (C) 2011 荒野无灯
@@ -22,7 +18,7 @@ Author URI: http://ihacklog.com/
  */
 
 /*
- Copyright 2011  荒野无灯
+ Copyright 2012  荒野无灯
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

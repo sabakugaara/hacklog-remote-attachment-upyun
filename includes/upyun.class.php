@@ -5,13 +5,15 @@ if(!defined('ABSPATH'))
 }
 
 class UpYun {
-	const VERION = 'ihacklog_20120206';
+	const VERION        = 'ihacklog_20120206';
 	private $bucketname;
 	private $username;
 	private $password;
 	private $api_domain = 'v0.api.upyun.com';
-	public $timeout = 30;
-	public $debug = false;
+	private $content_md5 = null;
+	private $file_secret = null;
+	public $timeout     = 30;
+	public $debug       = false;
 	public $errors;
 	public static $http;
 	
@@ -80,6 +82,15 @@ class UpYun {
 	}
 	
 	/**
+	* 设置待上传文件的 Content-MD5 值（如又拍云服务端收到的文件MD5值与用户设置的不一致，将回报 406 Not Acceptable 错误）
+	* @param $str （文件 MD5 校验码）
+	* return null;
+	*/
+	public function setContentMD5($str){
+		$this->content_md5 = $str;
+	}
+
+	/**
 	 * 连接签名方法
 	 * 
 	 * @param $method 请求方式
@@ -111,7 +122,7 @@ class UpYun {
 		if( is_wp_error($http))
 		{
 			$this->errors = $http;
-			return FALSE;
+			return NULL;
 		}
 		//check if the relative path string is started with a '/' ,since the upyun API need this
 		if ('/' != substr ( $uri, 0, 1 )) {
@@ -166,15 +177,15 @@ class UpYun {
 		if( !in_array($http_method, $valid_method ))
 		{
 			$this->errors->add ( 'invalid_call_of_http_method_error', __ ( 'invalid http method(valid method can be: '. implode(',',$valid_method) .')' ) );
-			return FALSE;
+			return NULL;
 		}
 		@set_time_limit(300);
 		$response = $http->$http_method( $process_url,$r );
 		$communication_error = 'Can not connect to remote server!';
 		if( is_wp_error($response))
 		{
-			$this->errors->add ( 'communication_error', __ ( $communication_error  ) );
-			return FALSE;
+			$this->errors->add ( 'connect', __ ( $communication_error  ) );
+			return NULL;
 		}
 // 		var_dump($response);
 		$response_code = $response['response']['code'];
@@ -184,13 +195,24 @@ class UpYun {
 				throw new Exception ( $response['response']['message'], $response_code );
 			} else {
 				//store the error.
-				if( empty($response['response']['message']) )
+				//var_dump($response);
+				if( !empty( $response['body'] ))
 				{
-					$response['response']['message'] = 'Can not connect to remote server!';
+					//the body may like: string '<h1>401 Unauthorized</h1>error (user not exists.1)'
+					$error_message = str_replace(array('<h1>','</h1>'),array('<strong>','</strong>. '),$response['body']);
 				}
-				$this->errors->add ( 'communication_error', __ ( $response['response']['message'] ) );
+				elseif(!empty($response['response']['message']))
+				{
+					$error_message = $response['response']['message'];
+				}
+				else
+				{
+					$error_message = 'Can not connect to remote server!';
+				}
+				//var_dump($error_message);
+				$this->errors->add ( 'upyun_authentication_error', __ ( $error_message ) );
 			}
-			return null;
+			return NULL;
 		}
 		return $response['body'];
 	}
@@ -211,7 +233,7 @@ class UpYun {
 	 */
 	public function getFolderUsage($path) {
 		$r = $this->HttpAction ( 'GET', "{$path}?usage", null );
-		if ($r == '')
+		if ( $r == '')
 			return null;
 		return floatval ( $r );
 	}
@@ -320,14 +342,21 @@ class UpYun {
 	 * get the total bucket space usage.
 	 * @return bool
 	 */
-	public function check_rest_connection() {
+	public function check_connection_and_authentication() {
 		if( gethostbyname($this->api_domain ) == $this->api_domain )
 		{
-			$this->errors->add ( 'connect', __('Failed to connect to remote server!') );
+			$this->errors->add( 'connect', __('Failed to connect to remote server!Could not resolve the hostname.') );
 			return FALSE;
 		}
-		if (null == $this->getBucketUsage()) {
-			$this->errors->add ( 'connect', __ ( 'Could not communicate with upyun server!' ) );
+		//return null if failed. otherwise it may be null string '' .
+		$result = $this->HttpAction ( 'GET', "/", null );
+		if ( is_null($result) ) 
+		{
+			//if there is NO upyun_authentication_error , set the default error.
+			if( !$this->errors->get_error_message('upyun_authentication_error') )
+			{
+				$this->errors->add( 'connect', __ ( 'Could not communicate with upyun server!' ) );
+			}
 			return FALSE;
 		} else {
 			return TRUE;
