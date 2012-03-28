@@ -9,6 +9,7 @@ class UpYun {
 	private $bucketname;
 	private $username;
 	private $password;
+	private $form_api_secret = '';
 	private $api_domain = 'v0.api.upyun.com';
 	private $content_md5 = null;
 	private $file_secret = null;
@@ -27,11 +28,19 @@ class UpYun {
 	 *       	 return UpYun object
 	 */
 	public function __construct($args) {
-		$new_args = array_merge ( array ('api_domain' => $this->api_domain, 'bucketname' => '', 'username' => '', 'password' => '', 'timeout' => '' ), $args );
+		$new_args = array_merge ( 
+			array (
+				'api_domain' => $this->api_domain, 
+				'bucketname' => '', 
+				'username' => '', 
+				'password' => '',
+				'form_api_secret' => '',
+				'timeout' => '' ), $args );
 		
 		$this->bucketname = $new_args ['bucketname'];
 		$this->username = $new_args ['username'];
 		$this->password = md5 ( $new_args ['password'] );
+		$this->form_api_secret = $new_args['form_api_secret'];
 		$this->setTimeout ( $new_args ['timeout'] );
 		$this->setApiDomain ( $new_args ['api_domain'] );
 		$this->errors = new WP_Error();
@@ -71,6 +80,10 @@ class UpYun {
 		$this->api_domain = $domain;
 	}
 	
+	public function get_api_domain()
+	{
+		return $this->api_domain;
+	}
 	/**
 	 * 设置连接超时时间
 	 * 
@@ -102,6 +115,71 @@ class UpYun {
 		return 'UpYun ' . $this->username . ':' . md5 ( $sign );
 	}
 	
+	public function get_bucketname()
+	{
+		return $this->bucketname;
+	}
+
+	private function get_form_api_secret()
+	{
+		return $this->form_api_secret;
+	}
+
+	public function check_form_api_internal_error()
+	{
+		if( md5("{$_GET['code']}&{$_GET['message']}&{$_GET['url']}&{$_GET['time']}&") == $_GET['non-sign'] )
+		{
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+	
+	public function check_form_api_return_param()
+	{
+		if(	md5("{$_GET['code']}&{$_GET['message']}&{$_GET['url']}&{$_GET['time']}&". $this->get_form_api_secret() ) == $_GET['sign'] )
+		{
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+	/**
+	 * md5(policy+'&'+表单API验证密匙)
+	 */
+	public function get_form_api_signature($policy)
+	{
+		return md5($policy . '&' . $this->get_form_api_secret() );
+	}
+
+	public function build_policy($args)
+	{
+		$default = array(
+			'expire' => 5, // 5 min
+			'path' => '/{year}/{mon}/{random}{.suffix}', // full relative path
+			'allow_file_ext' => 'jpg,jpeg,gif,png,mp4,flv,avi,doc,pdf,zip,rar,tar.gz,tar,bz2,7z',
+			'content_length_range' =>'0,104857600', // 10MB( 10485760) 20MB ( 20971520 ),最大为100MB ( 104857600 )
+			'return_url' => WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php',
+			'notify_url' => '',
+			);
+		$args = array_merge($default,$args);
+		$policydoc = array(
+		"bucket" => $this->get_bucketname(), /// 空间名
+		"expiration" => time() + $args['expire']*60, /// 该次授权过期时间
+		"save-key" => $args['path'], /// 命名规则，/2011/12/随机.扩展名
+		"allow-file-type" => $args['allow_file_ext'], /// 仅允许上传图片
+		"content-length-range" => $args['content_length_range'] , /// 文件在 100K 以下
+		"return-url" => $args['return_url'] , /// 回调地址
+		"notify-url" =>$args['notify_url'] /// 异步回调地址
+		);
+		//var_dump($policydoc);
+		$policy = base64_encode(json_encode($policydoc));  /// 注意 base64 编码后的 policy字符串中不包含换行符！
+		return $policy;
+	}
 	/**
 	 * 连接处理逻辑
 	 * @todo 添加output_file支持( 荒野无灯 2012-02-06 )

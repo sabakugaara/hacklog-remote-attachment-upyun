@@ -28,6 +28,7 @@ class hacklogra_upyun
 	private static $rest_pwd         = '4d4173594c77453d';
 	private static $rest_server      = 'v0.api.upyun.com';
 	private static $bucketname       = '';
+	private static $form_api_secret  = '';
 	private static $rest_port        = 80 ;
 	private static $rest_timeout     = 30;
 	private static $subdir           = '';
@@ -54,6 +55,8 @@ class hacklogra_upyun
 		add_action('init', array(__CLASS__, 'admin_init'));
 		//frontend filter,filter on image only
 		add_filter('wp_get_attachment_url', array(__CLASS__, 'replace_baseurl'), -999);
+		add_action('wp_ajax_hacklogra_upyun_signature', array(__CLASS__, 'return_signature'));
+		add_action('media_buttons', array(__CLASS__, 'add_media_button'), 11);
 	}
 
 ############################## PRIVATE FUNCTIONS ##############################################
@@ -137,6 +140,7 @@ class hacklogra_upyun
 		return array(
 			'rest_user' => self::$rest_user,
 			'rest_pwd' => self::$rest_pwd,
+			'form_api_secret' => self::$form_api_secret,
 			'rest_server' => self::$rest_server,
 			'bucketname' => self::$bucketname,	
 			'rest_port' => self::$rest_port,
@@ -256,6 +260,7 @@ class hacklogra_upyun
 		$opts = get_option(self::opt_primary);
 		self::$rest_user = $opts['rest_user'];
 		self::$rest_pwd = $opts['rest_pwd'];
+		self::$form_api_secret = $opts['form_api_secret'];
 		self::$rest_server = $opts['rest_server'];
 		self::$bucketname = $opts['bucketname'];
 		self::$rest_port = $opts['rest_port'];
@@ -295,6 +300,198 @@ class hacklogra_upyun
 				$opts['remote_baseurl'] . '/' . self::$http_remote_path;
 		self::$remote_url = self::$remote_baseurl . self::$subdir;
 	}
+
+public static function handle_form_api_upload($post_id, $post_data = array() )
+{
+	if (!self::setup_rest())
+	{
+		return new WP_Error('hacklogra_internal_error','failed to contruct Upyun class');
+	}
+		//check_admin_referer('media-form');
+		// Upload File button was clicked
+		if( self::$fs->check_form_api_internal_error() )
+		{
+			$id = new WP_Error('upyun_internal_error',__('Upyun internal Error!') );
+		}
+		else
+			if( $_GET['code'] == '200')
+			{
+			if(	self::$fs->check_form_api_return_param() )
+			{
+				$url = self::$remote_baseurl . ltrim($_GET['url'], '/');
+				//error_log(var_export(array(self::$remote_baseurl ,$_GET['url']),true));
+				$filename = basename($_GET['url']);
+				$ft = wp_check_filetype( $filename, null );
+				$type = $ft['type'];
+				$file = str_replace('/'. self::$http_remote_path .'/','',$_GET['url']);
+				$name_parts = pathinfo($filename);
+				$name = trim( substr( $filename, 0, -(1 + strlen($name_parts['extension'])) ) );
+				$title = $name;
+				$content = '';
+				// Construct the attachment array
+				$attachment = array_merge( array(
+					'post_mime_type' => $type,
+					'guid' => $url,
+					'post_parent' => $post_id,
+					'post_title' => $title,
+					'post_content' => $content,
+				), $post_data );
+
+				// This should never be set as it would then overwrite an existing attachment.
+				if ( isset( $attachment['ID'] ) )
+					unset( $attachment['ID'] );
+
+				// Save the data
+				$id = wp_insert_attachment($attachment, $file, $post_id);
+				if ( !is_wp_error($id) ) {
+					wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
+				}
+	
+			}
+		}
+		else
+		{
+			$id = new WP_Error('upyun_upload_error', $_GET['message'] );
+		}
+		return $id;
+}
+public static function return_signature()
+{
+	if (!self::setup_rest())
+	{
+		die(json_encode(array('error'=>'yes','message'=>'failed to contruct Upyun class')) );
+	}
+	$post_id = $_POST['post_id'];
+	$filename = basename($_POST['file']);
+	$unique_filename = self::unique_filename(self::$rest_remote_path . self::$subdir, $filename);
+	$policy = self::$fs->build_policy( 
+		array('path'=> '/'. self::$rest_remote_path . self::$subdir. '/'. $unique_filename,
+			'return_url' => WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php?post_id='.$post_id,
+			)  );
+	$signature = self::$fs->get_form_api_signature($policy );
+	header("Content-Type: text/json;Charset=UTF-8");
+	die(json_encode(array('policy'=> $policy, 'signature'=> $signature,'error'=>'none')) );
+}
+
+	public static function add_media_button($editor_id = 'content')
+	{
+		global $post_ID;
+		$url = WP_PLUGIN_URL . "/hacklog-remote-attachment-upyun/upload.php?post_id={$post_ID}&TB_iframe=1&width=640&height=451";
+		$admin_icon = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/images/upyun_icon.png';
+		if (is_ssl())
+		{
+			$url = str_replace('http://', 'https://', $url);
+		}
+		$alt = __('Upload local file to Upyun server', self::textdomain);
+		$img = '<img src="' . esc_url($admin_icon) . '" width="15" height="15" alt="' . esc_attr($alt) . '" />';
+
+		echo '<a href="' . esc_url($url) . '" class="thickbox hacklogra-upyun-button" id="' . esc_attr($editor_id) . '-hacklogra-upyun" title="' . esc_attr__('Hacklog Remote Attachment Upyun', self::textdomain) . '" onclick="return false;">' . $img . '</a>';
+	}
+
+public static function media_upload_type_form_upyun($type = 'file', $errors = null, $id = null) {
+
+	$post_id = isset( $_REQUEST['post_id'] )? intval( $_REQUEST['post_id'] ) : 0;
+		if (!self::connect_remote_server())
+		{
+			return self::raise_connection_error();
+		}
+	$upyun_form_action_url = 'http://' . self::$fs->get_api_domain(). '/'. self::$fs->get_bucketname() .'/';
+	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) && isset($_GET['sign']) ) 
+	{
+		$form_action_url = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php?post_id=' . $post_id .'&TB_iframe=1&width=640&height=451';
+	}
+	else
+	{
+		$form_action_url = $upyun_form_action_url;
+	}
+	
+	$form_class = 'media-upload-form type-form validate';
+
+	//if ( get_user_setting('uploader') )
+		$form_class .= ' html-uploader';
+?>
+
+<form enctype="multipart/form-data" method="post" action="<?php echo esc_attr($form_action_url); ?>" class="<?php echo $form_class; ?>" id="<?php echo $type; ?>-form">
+<?php submit_button( '', 'hidden', 'save', false ); ?>
+<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
+<?php wp_nonce_field('media-form'); ?>
+
+<input type="hidden" id="policy" name="policy" value="">
+<input type="hidden" id="signature" name="signature" value="">
+<h3 class="media-title"><?php _e('Add media files from your computer'); ?></h3>
+
+<?php my_media_upload_form( $errors ); ?>
+
+<div id="media-items"><?php
+
+if ( $id ) {
+	if ( !is_wp_error($id) ) {
+		add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2);
+		echo get_media_items( $id, $errors );
+	} else {
+		echo '<div id="media-upload-error">'.esc_html($id->get_error_message()).'</div></div>';
+		exit;
+	}
+}
+?></div>
+
+<p class="savebutton ml-submit">
+<?php submit_button( __( 'Save all changes' ), 'button', 'save', false ); ?>
+</p>
+</form>
+<script type="text/javascript">
+	jQuery(function($){
+		$('#html-upload').attr('disabled',true);
+		var set_upyun_form_api_action_url = function()
+		{
+			$('#file-form').attr('action','<?php echo $upyun_form_action_url;?>');
+		}
+       $('#async-upload').change(function()
+       {
+       	var filename = $('#async-upload').val();
+       	if( filename == '' )
+       	{
+       		alert('Please choose a file!');
+       		$('#html-upload').attr('disabled',true);
+       		return false;
+       	}
+       	$.ajax(
+       		{url:ajaxurl,
+			type:'post',
+			data: {'action': 'hacklogra_upyun_signature', 'post_id': '<?php echo $post_id;?>','file': filename,'_wpnonce':$('#_wpnonce').val()},
+			dataType: 'json',
+			async: false,
+			cache: false,
+			timeout: 5*1000,
+success: function(data,textStatus){
+	if( data.error == 'yes')
+	{
+		alert('Connection eror!');
+		return false;
+	}
+	//alert( 'policy: ' + data.policy + 'signature: ' + data.signature );
+	$('#policy').val(data.policy);
+	$('#signature').val(data.signature);
+	set_upyun_form_api_action_url();
+	$('#html-upload').attr('disabled',false);
+	return true;
+},
+			error: function(jqXHR, textStatus, errorThrown){
+				alert('error hook called. textStatus: ' + textStatus +"\n" + 'errorThrown: ' + errorThrown);
+				$('#html-upload').attr('disabled',true);
+				return false;
+			}
+		}
+       		);
+       	return false;
+       }
+
+       	);
+	});
+</script>
+<?php
+}
+
 
 	/**
 	 * do the stuff once the plugin is installed
@@ -395,6 +592,7 @@ class hacklogra_upyun
 					'bucketname' => self::$bucketname,
 					'username' => self::$rest_user,
 					'password' => self::decrypt(self::$rest_pwd),//decrypt the password
+					'form_api_secret' => self::$form_api_secret,
 				);
 			if( null != $args )
 			{
@@ -406,11 +604,6 @@ class hacklogra_upyun
 				return FALSE;
 			}
 		}
-	
-		//test for authentication
-		if ( !self::$fs->check_connection_and_authentication() )
-			return false; //There was an erorr connecting to the server.
-
 		return true;
 	}
 
@@ -420,11 +613,17 @@ class hacklogra_upyun
 	 * @static
 	 * @return void
 	 */
-	public static function connect_remote_server()
+	public static function connect_remote_server($args = null )
 	{
-
 		//just call the setup and test the authentication
-		return self::setup_rest();
+		if( self::setup_rest($args) )
+		{
+		//test for authentication
+		if ( !self::$fs->check_connection_and_authentication() )
+			return FALSE; //There was an erorr connecting to the server.
+		}
+		return TRUE;
+
 	}
 
 	/**
@@ -802,10 +1001,11 @@ class hacklogra_upyun
 				'bucketname' => trim($_POST['bucketname']),
 				'username'   => trim($_POST['rest_user']),
 				'password'   => !empty($_POST['rest_pwd']) ? trim($_POST['rest_pwd']) : self::decrypt(self::$rest_pwd),
+				'form_api_secret' => !empty($_POST['form_api_secret']) ? trim($_POST['form_api_secret']) : self::$form_api_secret,
 				'timeout'    => 	trim($_POST['timeoute']),
 				'ssl'        => FALSE,
 			);
-			if (self::setup_rest($credentials))
+			if (self::connect_remote_server($credentials))
 			{
 				$msg .= __('Connected and Authenticated successfully.', self::textdomain);
 			}
@@ -896,6 +1096,15 @@ class hacklogra_upyun
 							<span class="description"><?php _e('the password.', self::textdomain) ?></span>
 						</td>
 					</tr>
+
+					<tr valign="top">
+						<th scope="row"><label for="form_api_secret"><?php _e('form api secret', self::textdomain) ?>:</label></th>
+						<td>
+							<input name="form_api_secret" type="password" class="regular-text" size="60" id="form_api_secret"
+								   value=""/>
+							<span class="description"><?php _e('the form_api_secret.', self::textdomain) ?></span>
+						</td>
+					</tr>					
 					<tr valign="top">
 						<th scope="row"><label for="rest_timeout"><?php _e('rest timeout', self::textdomain) ?>:</label></th>
 						<td>
