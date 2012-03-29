@@ -51,6 +51,7 @@ if($post_id <= 0)
 else
 {
 
+	add_filter('media_upload_tabs', 'hacklogra_upyun_upload_tags');
 	// upload type: image, video, file, ..?
 	if ( isset($_GET['type']) )
 		$type = strval($_GET['type']);
@@ -65,8 +66,23 @@ else
 
 	$body_id = 'media-upload';
 
-	// let the action code decide how to handle the request
-		hacklogra_upyun_wp_media_upload_handler();
+	if( $tab == 'type')
+	{
+		hacklogra_upyun_media_upload_handler();
+	}
+	else
+	{
+		// let the action code decide how to handle the request
+		if ( $tab == 'type_url' || !array_key_exists( $tab , media_upload_tabs() ) )
+		{
+			do_action("media_upload_$type");
+		}
+		else
+		{
+			do_action("media_upload_$tab");
+		}	
+	}
+
 }
 
 
@@ -77,7 +93,7 @@ else
  *
  * @return unknown
  */
-function hacklogra_upyun_wp_media_upload_handler()
+function hacklogra_upyun_media_upload_handler()
 {
 	global $is_iphone;
 
@@ -217,5 +233,10 @@ if ( ($is_IE || $is_opera) && $max_upload_size > 100 * 1024 * 1024 ) { ?>
 
 }
 
+function hacklogra_upyun_upload_tags($_default_tabs)
+{
+	$_default_tabs['type'] =__('via UpYun Form API', hacklogra_upyun::textdomain );
+	return $_default_tabs;
+}
 
 ?>

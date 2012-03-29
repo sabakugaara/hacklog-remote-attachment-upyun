@@ -387,7 +387,7 @@ public static function return_signature()
 	public static function add_media_button($editor_id = 'content')
 	{
 		global $post_ID;
-		$url = WP_PLUGIN_URL . "/hacklog-remote-attachment-upyun/upload.php?post_id={$post_ID}&TB_iframe=1&width=640&height=451";
+		$url = WP_PLUGIN_URL . "/hacklog-remote-attachment-upyun/upload.php?post_id={$post_ID}&TB_iframe=1&width=640&height=451&tab=upyun";
 		$admin_icon = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/images/upyun_icon.png';
 		if (is_ssl())
 		{
@@ -407,6 +407,9 @@ public static function media_upload_type_form_upyun($type = 'file', $errors = nu
 	{
 		return self::raise_connection_error();
 	}
+	
+	media_upload_header();
+	
 	$upyun_form_action_url = 'http://' . self::$fs->get_api_domain(). '/'. self::$fs->get_bucketname() .'/';
 	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) && isset($_GET['sign']) ) 
 	{
@@ -431,8 +434,24 @@ public static function media_upload_type_form_upyun($type = 'file', $errors = nu
 <input type="hidden" id="policy" name="policy" value="">
 <input type="hidden" id="signature" name="signature" value="">
 <h3 class="media-title"><?php _e('Add media files from your computer'); ?></h3>
-
+<p style="border:3px dotted #ccc;padding:5px;">
+	<?php _e('I advise you to upload images via click WordPress original add media button.', self::textdomain);?>
+	<br />
+	<?php _e('This page was designed for uploading big files to UpYun Server.', self::textdomain);?>
+</p>
 <?php hacklogra_upyun_media_upload_form( $errors ); ?>
+
+<script type="text/javascript">
+//<![CDATA[
+jQuery(function($){
+	var preloaded = $(".media-item.preloaded");
+	if ( preloaded.length > 0 ) {
+		preloaded.each(function(){prepareMediaItem({id:this.id.replace(/[^0-9]/g, '')},'');});
+	}
+	updateMediaForm();
+});
+//]]>
+</script>
 
 <div id="media-items"><?php
 
