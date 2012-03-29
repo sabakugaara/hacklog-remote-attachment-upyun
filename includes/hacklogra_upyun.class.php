@@ -926,7 +926,7 @@ success: function(data,textStatus){
 			$file = self::$rest_remote_path . '/' . $file;
 		}
 
-		self::connect_remote_server();
+		self::setup_rest();
 		self::decrease_filesize_used(self::$fs, $file);
 		self::$fs->delete($file, false, 'f');
 		return '';

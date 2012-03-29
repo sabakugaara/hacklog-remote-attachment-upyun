@@ -29,6 +29,7 @@ else
 if (!current_user_can('upload_files'))
 	wp_die(__('You do not have permission to upload files.'));
 
+wp_enqueue_script('plupload-handlers');
 wp_enqueue_script('image-edit');
 wp_enqueue_script('set-post-thumbnail' );
 wp_enqueue_style('imgareaselect');
@@ -83,17 +84,19 @@ function hacklogra_upyun_wp_media_upload_handler()
 	$errors = array();
 	$id = 0;
 
-	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) && isset($_GET['sign']) ) 
+	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) ) 
 	{
 		$id = hacklogra_upyun::handle_form_api_upload($_REQUEST['post_id'], $post_data = array() );
 		unset($_FILES);
-		if ( is_wp_error($id) ) {
+		if ( is_wp_error($id) ) 
+		{
 			$errors['upload_error'] = $id;
 			$id = false;
 		}
 	}
 
-	if ( !empty($_POST['insertonlybutton']) ) {
+	if ( !empty($_POST['insertonlybutton']) ) 
+	{
 		$src = $_POST['src'];
 		if ( !empty($src) && !strpos($src, '://') )
 			$src = "http://$src";
@@ -188,7 +191,7 @@ function hacklogra_upyun_media_upload_form( $errors = null )
 		echo $errors['upload_notice'];
 
 ?></div>
-<div id="media-upload-error" style="background-color: #FFFFE0;border-color: #E6DB55;color:#F00;"><?php
+<div id="media-upload-error" style="background-color:#FFFFE0;border-color:#E6DB55;color:#F00;"><?php
 
 	if (isset($errors['upload_error']) && is_wp_error($errors['upload_error']))
 		echo $errors['upload_error']->get_error_message();
