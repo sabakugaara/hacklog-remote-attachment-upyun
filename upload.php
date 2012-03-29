@@ -212,7 +212,8 @@ function hacklogra_upyun_media_upload_form( $errors = null )
 	if (isset($errors['upload_error']) && is_wp_error($errors['upload_error']))	
 	{
 		echo $errors['upload_error']->get_error_message();
-		echo '<a href="#" onclick="history.go(-1);return false;">Retry</a>';
+		$location_href = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php?post_id=' . $post_id .'&TB_iframe=1&width=640&height=451';
+		echo '<a href="#" onclick="location.href=\''. $location_href .'\';return false;">Retry</a>';
 	}
 ?>
 </div>
