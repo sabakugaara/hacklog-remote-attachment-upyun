@@ -4,7 +4,7 @@
  * @encoding UTF-8
  * @author 荒野无灯 <HuangYeWuDeng>
  * @link http://ihacklog.com
- * @copyright Copyright (C) 2011 荒野无灯
+ * @copyright Copyright (C) 2012 荒野无灯
  * @license http://www.gnu.org/licenses/
  */
 if(!defined('ABSPATH'))

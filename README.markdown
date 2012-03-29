@@ -9,7 +9,7 @@
 * Tags: attachment,manager,admin,images,thumbnail,ftp,remote
 * Requires at least: 3.3
 * Tested up to: 3.3.1
-* Stable tag: 1.4.0
+* Stable tag: 1.4.1
 
 ------------------------------------------------------------
 
@@ -84,6 +84,9 @@ see
 
 
 ### Changelog
+
+#### 1.4.1
+* added: HTML5 file info detect.
 
 #### 1.4.0
 * added: form API uploading support.
