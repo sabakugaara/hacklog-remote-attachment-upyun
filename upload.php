@@ -201,18 +201,21 @@ function hacklogra_upyun_media_upload_form( $errors = null )
 	}
 ?>
 
-<div id="media-upload-notice"><?php
-
+<div id="media-upload-notice">
+<?php
 	if (isset($errors['upload_notice']) )
 		echo $errors['upload_notice'];
 
 ?></div>
-<div id="media-upload-error" style="background-color:#FFFFE0;border-color:#E6DB55;color:#F00;"><?php
-
-	if (isset($errors['upload_error']) && is_wp_error($errors['upload_error']))
+<div id="media-upload-error" style="background-color:#FFFFE0;border-color:#E6DB55;color:#F00;">
+<?php
+	if (isset($errors['upload_error']) && is_wp_error($errors['upload_error']))	
+	{
 		echo $errors['upload_error']->get_error_message();
-
-?></div>
+		echo '<a href="#" onclick="history.go(-1);return false;">Retry</a>';
+	}
+?>
+</div>
 
 
 <div id="html-upload-ui" class="hide-if-js">

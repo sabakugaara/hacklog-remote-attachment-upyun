@@ -453,10 +453,12 @@ jQuery(function($){
 //]]>
 </script>
 
-<div id="media-items"><?php
-
-if ( $id ) {
-	if ( !is_wp_error($id) ) {
+<div id="media-items">
+<?php
+if ( $id ) 
+{
+	if ( !is_wp_error($id) ) 
+	{
 		add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2);
 		echo get_media_items( $id, $errors );
 	} else {
@@ -476,7 +478,8 @@ if ( $id ) {
 		var set_upyun_form_api_action_url = function()
 		{
 			$('#file-form').attr('action','<?php echo $upyun_form_action_url;?>');
-		}
+		};
+		
        $('#async-upload').change(function()
        {
        	var filename = $('#async-upload').val();
