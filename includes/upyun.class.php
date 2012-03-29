@@ -13,7 +13,7 @@ class UpYun {
 	private $api_domain = 'v0.api.upyun.com';
 	private $content_md5 = null;
 	private $file_secret = null;
-	private $form_api_content_range_max = 104857600;
+	private $form_api_content_max_length = 104857600;
 	private $form_api_allowed_ext = 'jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z';
 	public $timeout     = 30;
 	public $form_api_timeout = 300;
@@ -39,7 +39,7 @@ class UpYun {
 				'password' => '',
 				'form_api_secret' => '',
 				'timeout' => $this->timeout,
-				'form_api_content_range_max'=> $this->form_api_content_range_max,
+				'form_api_content_max_length'=> $this->form_api_content_max_length,
 				'form_api_allowed_ext'=> $this->form_api_allowed_ext,
 				'form_api_timeout'=> $this->form_api_timeout,
 					), $args );
@@ -169,7 +169,7 @@ class UpYun {
 			'expire' => $this->form_api_timeout, // 300 s
 			'path' => '/{year}/{mon}/{random}{.suffix}', // full relative path
 			'allow_file_ext' => $this->form_api_allowed_ext,
-			'content_length_range' =>'0,' . $this->form_api_content_range_max, // 10MB( 10485760) 20MB ( 20971520 ),最大为100MB ( 104857600 )
+			'content_length_range' =>'0,' . $this->form_api_content_max_length, // 10MB( 10485760) 20MB ( 20971520 ),最大为100MB ( 104857600 )
 			'return_url' => WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php',
 			'notify_url' => '',
 			);
