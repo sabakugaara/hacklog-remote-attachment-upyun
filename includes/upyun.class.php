@@ -5,7 +5,7 @@ if(!defined('ABSPATH'))
 }
 
 class UpYun {
-	const VERION        = 'ihacklog_20120206';
+	const VERION        = 'ihacklog_20120328';
 	private $bucketname;
 	private $username;
 	private $password;
