@@ -1,16 +1,17 @@
 <?php
 /**
- * Manage media uploaded file.
- *
- * There are many filters in here for media. Plugins can extend functionality
- * by hooking into the filters.
- *
- * @package WordPress
- * @subpackage Administration
+ * @package Hacklog Remote Attachment Upyun
+ * @encoding UTF-8
+ * @author 荒野无灯 <HuangYeWuDeng>
+ * @link http://ihacklog.com
+ * @copyright Copyright (C) 2012 荒野无灯
+ * @license http://www.gnu.org/licenses/
+ * @description 
+ * upload file via UpYun form API.
  */
 
-if ( ! isset( $_GET['inline'] ) )
-	define( 'IFRAME_REQUEST' , true );
+
+define( 'IFRAME_REQUEST' , true );
 
 /** Load WordPress Administration Bootstrap */
 $bootstrap_file = dirname(dirname(dirname(dirname(__FILE__)))). '/wp-admin/admin.php' ;
@@ -28,7 +29,6 @@ else
 if (!current_user_can('upload_files'))
 	wp_die(__('You do not have permission to upload files.'));
 
-wp_enqueue_script('plupload-handlers');
 wp_enqueue_script('image-edit');
 wp_enqueue_script('set-post-thumbnail' );
 wp_enqueue_style('imgareaselect');
@@ -65,18 +65,19 @@ else
 	$body_id = 'media-upload';
 
 	// let the action code decide how to handle the request
-		my_wp_media_upload_handler();
+		hacklogra_upyun_wp_media_upload_handler();
 }
 
 
 /**
  * {@internal Missing Short Description}}
  *
- * @since 2.5.0
+ * @since 1.4.0
  *
  * @return unknown
  */
-function my_wp_media_upload_handler() {
+function hacklogra_upyun_wp_media_upload_handler()
+{
 	global $is_iphone;
 
 	$errors = array();
@@ -155,7 +156,8 @@ function my_wp_media_upload_handler() {
 }
 
 
-function my_media_upload_form( $errors = null ) {
+function hacklogra_upyun_media_upload_form( $errors = null ) 
+{
 	global $type, $tab, $pagenow, $is_IE, $is_opera, $is_iphone;
 
 	if ( $is_iphone )
@@ -165,7 +167,7 @@ function my_media_upload_form( $errors = null ) {
 	$_type = isset($type) ? $type : '';
 	$_tab = isset($tab) ? $tab : '';
 
-	$upload_size_unit = $max_upload_size = wp_max_upload_size();
+	$upload_size_unit = $max_upload_size = UpYun::FORM_API_MAX_CONTENT_LENGTH;
 	$sizes = array( 'KB', 'MB', 'GB' );
 
 	for ( $u = -1; $upload_size_unit > 1024 && $u < count( $sizes ) - 1; $u++ ) {
@@ -186,7 +188,7 @@ function my_media_upload_form( $errors = null ) {
 		echo $errors['upload_notice'];
 
 ?></div>
-<div id="media-upload-error"><?php
+<div id="media-upload-error" style="background-color: #FFFFE0;border-color: #E6DB55;color:#F00;"><?php
 
 	if (isset($errors['upload_error']) && is_wp_error($errors['upload_error']))
 		echo $errors['upload_error']->get_error_message();

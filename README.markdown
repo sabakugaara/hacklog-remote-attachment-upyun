@@ -9,7 +9,7 @@
 * Tags: attachment,manager,admin,images,thumbnail,ftp,remote
 * Requires at least: 3.3
 * Tested up to: 3.3.1
-* Stable tag: 1.3.0
+* Stable tag: 1.4.0
 
 ------------------------------------------------------------
 
@@ -45,6 +45,7 @@ For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5
 * 1.2.8 增加对xmlrpc支持(支持通过Windows Live Writer 上传图片时自动上传到Upyun服务器)
 * 1.2.9 修复Windows Live Writer 上传图片时url不正确的bug
 * 1.3.0 修复首次使用插件时，又拍云空间使用量为0时显示“测试连接失败”的bug.增加更详细的错误信息提示。
+* 1.4.0 增加form API上传支持，可上传100MB以内大小的文件（又拍云form API目前最大只支持100MB）
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
 [安装指导](http://ihacklog.com/?p=4993 "安装指导") 
@@ -78,10 +79,14 @@ see
 
 ### Upgrade Notice
 
-
+#### 1.3.0 upgrade to 1.4.0
+如果要使用**表单 API 功能**,注意在又拍云空间管理里面开启表单 API功能，并在插件后台选项中更新表单 API密匙. 
 
 
 ### Changelog
+
+#### 1.4.0
+* added: form API uploading support.
 
 #### 1.3.0
 * fixed: the bug that say "Connection failed" when the bucket is empty in the first time use this plugin.

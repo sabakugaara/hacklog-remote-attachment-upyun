@@ -5,18 +5,26 @@ if(!defined('ABSPATH'))
 }
 
 class UpYun {
+	//currently ,max filesize allowed by Upyuh form API is 100MiB
+	const FORM_API_MAX_CONTENT_LENGTH = 104857600;
 	const VERION        = 'ihacklog_20120328';
+	private $available_api_servers = array(
+			'v1.api.upyun.com',
+			'v2.api.upyun.com',
+			'v3.api.upyun.com',
+			'v0.api.upyun.com',
+			);
 	private $bucketname;
 	private $username;
 	private $password;
-	private $form_api_secret = '';
 	private $api_domain = 'v0.api.upyun.com';
 	private $content_md5 = null;
 	private $file_secret = null;
+	private $form_api_secret = '';
 	private $form_api_content_max_length = 100;
 	private $form_api_allowed_ext = 'jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z';
+	private $form_api_timeout = 300;
 	public $timeout     = 30;
-	public $form_api_timeout = 300;
 	public $debug       = false;
 	public $errors;
 	public static $http;
@@ -48,6 +56,9 @@ class UpYun {
 		$this->username = $new_args ['username'];
 		$this->password = md5 ( $new_args ['password'] );
 		$this->form_api_secret = $new_args['form_api_secret'];
+		$this->set_form_api_content_max_length($new_args['form_api_content_max_length']);
+		$this->form_api_allowed_ext = $new_args['form_api_allowed_ext'];
+		$this->form_api_timeout = $new_args['form_api_timeout'];
 		$this->set_timeout ( $new_args ['timeout'] );
 		$this->set_api_domain ( $new_args ['api_domain'] );
 		$this->errors = new WP_Error();
@@ -58,21 +69,31 @@ class UpYun {
 	/**
 	 * check the needed param
 	 */
-	public function check_param() {
-		if (empty ( $this->api_domain )) {
+	public function check_param() 
+	{
+		if (empty ( $this->api_domain )) 
+		{
 			$this->errors->add ( 'empty_api_domain', __ ( 'api_domain is required' ) );
 		}
 		
-		if (empty ( $this->bucketname )) {
+		if (empty ( $this->bucketname )) 
+		{
 			$this->errors->add ( 'empty_bucketname', __ ( 'bucketname is required' ) );
 		}
 		
-		if (empty ( $this->username )) {
+		if (empty ( $this->username )) 
+		{
 			$this->errors->add ( 'empty_username', __ ( 'username is required' ) );
 		}
-		if (empty ( $this->password )) {
+		if (empty ( $this->password )) 
+		{
 			$this->errors->add ( 'empty_password', __ ( 'password is required' ) );
 		}
+		
+		if ($this->form_api_content_max_length > self::FORM_API_MAX_CONTENT_LENGTH ) 
+		{
+			$this->errors->add ( 'form_api_content_length_invalid', __ ( 'form API content length invalid.' ) );
+		}		
 	}
 	
 	/**
@@ -90,6 +111,11 @@ class UpYun {
 	public function get_api_domain()
 	{
 		return $this->api_domain;
+	}
+	
+	public function get_available_api_servers()
+	{
+		return $this->available_api_servers;
 	}
 	/**
 	 * 设置连接超时时间
@@ -110,6 +136,13 @@ class UpYun {
 		$this->content_md5 = $str;
 	}
 
+	public function set_form_api_content_max_length($MiB)
+	{
+		$MiB = $MiB > 0 ? $MiB : 20;
+		$MiB =  1024 * 1024 * $MiB;
+		$this->form_api_content_max_length = (int) $MiB;
+	}
+	
 	/**
 	 * 连接签名方法
 	 * 
@@ -169,7 +202,7 @@ class UpYun {
 			'expire' => $this->form_api_timeout, // 300 s
 			'path' => '/{year}/{mon}/{random}{.suffix}', // full relative path
 			'allow_file_ext' => $this->form_api_allowed_ext,
-			'content_length_range' =>'0,' . 1024 * 1024 * $this->form_api_content_max_length, // 10MB( 10485760) 20MB ( 20971520 ),最大为100MB ( 104857600 )
+			'content_length_range' =>'0,' . $this->form_api_content_max_length, // 10MB( 10485760) 20MB ( 20971520 ),最大为100MB ( 104857600 )
 			'return_url' => WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php',
 			'notify_url' => '',
 			);

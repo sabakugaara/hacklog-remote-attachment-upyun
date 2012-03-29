@@ -22,13 +22,16 @@ class hacklogra_upyun
 	const opt_space   = 'hacklogra_remote_filesize';
 	//new option name
 	const opt_primary = 'hacklogra_upyun_options';
-	const version     = '1.3.0-upyun-ported-from-1.2.6-origin';
+	const version     = '1.4.0-upyun-ported-from-1.2.6-origin';
 	private static $img_ext          = array('jpg', 'jpeg', 'png', 'gif', 'bmp');
 	private static $rest_user        = 'admin';
 	private static $rest_pwd         = '4d4173594c77453d';
 	private static $rest_server      = 'v0.api.upyun.com';
 	private static $bucketname       = '';
 	private static $form_api_secret  = '';
+	private static $form_api_content_max_length = 100;
+	private static $form_api_allowed_ext = 'jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z';
+	private static $form_api_timeout = 300;
 	private static $rest_port        = 80 ;
 	private static $rest_timeout     = 30;
 	private static $subdir           = '';
@@ -141,6 +144,9 @@ class hacklogra_upyun
 			'rest_user' => self::$rest_user,
 			'rest_pwd' => self::$rest_pwd,
 			'form_api_secret' => self::$form_api_secret,
+			'form_api_content_max_length' => self::$form_api_content_max_length,
+			'form_api_allowed_ext'=> self::$form_api_allowed_ext,
+			'form_api_timeout'=> self::$form_api_timeout,		
 			'rest_server' => self::$rest_server,
 			'bucketname' => self::$bucketname,	
 			'rest_port' => self::$rest_port,
@@ -261,6 +267,9 @@ class hacklogra_upyun
 		self::$rest_user = $opts['rest_user'];
 		self::$rest_pwd = $opts['rest_pwd'];
 		self::$form_api_secret = $opts['form_api_secret'];
+		self::$form_api_allowed_ext = $opts['form_api_allowed_ext'];
+		self::$form_api_content_max_length = $opts['form_api_content_max_length'];
+		self::$form_api_timeout = $opts['form_api_timeout'];
 		self::$rest_server = $opts['rest_server'];
 		self::$bucketname = $opts['bucketname'];
 		self::$rest_port = $opts['rest_port'];
@@ -355,6 +364,8 @@ public static function handle_form_api_upload($post_id, $post_data = array() )
 		}
 		return $id;
 }
+
+
 public static function return_signature()
 {
 	if (!self::setup_rest())
@@ -388,13 +399,14 @@ public static function return_signature()
 		echo '<a href="' . esc_url($url) . '" class="thickbox hacklogra-upyun-button" id="' . esc_attr($editor_id) . '-hacklogra-upyun" title="' . esc_attr__('Hacklog Remote Attachment Upyun', self::textdomain) . '" onclick="return false;">' . $img . '</a>';
 	}
 
-public static function media_upload_type_form_upyun($type = 'file', $errors = null, $id = null) {
+public static function media_upload_type_form_upyun($type = 'file', $errors = null, $id = null)
+{
 
 	$post_id = isset( $_REQUEST['post_id'] )? intval( $_REQUEST['post_id'] ) : 0;
-		if (!self::connect_remote_server())
-		{
-			return self::raise_connection_error();
-		}
+	if (!self::connect_remote_server())
+	{
+		return self::raise_connection_error();
+	}
 	$upyun_form_action_url = 'http://' . self::$fs->get_api_domain(). '/'. self::$fs->get_bucketname() .'/';
 	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) && isset($_GET['sign']) ) 
 	{
@@ -420,7 +432,7 @@ public static function media_upload_type_form_upyun($type = 'file', $errors = nu
 <input type="hidden" id="signature" name="signature" value="">
 <h3 class="media-title"><?php _e('Add media files from your computer'); ?></h3>
 
-<?php my_media_upload_form( $errors ); ?>
+<?php hacklogra_upyun_media_upload_form( $errors ); ?>
 
 <div id="media-items"><?php
 
@@ -593,6 +605,9 @@ success: function(data,textStatus){
 					'username' => self::$rest_user,
 					'password' => self::decrypt(self::$rest_pwd),//decrypt the password
 					'form_api_secret' => self::$form_api_secret,
+					'form_api_allowed_ext'=> self::$form_api_allowed_ext,
+					'form_api_content_max_length' => self::$form_api_content_max_length ,
+					'form_api_timeout' => self::$form_api_timeout ,
 				);
 			if( null != $args )
 			{
@@ -1058,7 +1073,7 @@ success: function(data,textStatus){
 						<td>
 							<input name="rest_server" type="text" class="regular-text" size="100" id="rest_server"
 								   value="<?php echo self::get_opt('rest_server'); ?>"/>
-							<span class="description"><?php _e('the IP or domain name of remote file server.', self::textdomain) ?></span>
+							<span class="description"><?php $upyun = new UpYun(array()) ;echo sprintf(__('the IP or domain name of remote file server.Available values are: <strong>%s</strong>', self::textdomain),implode(',', $upyun->get_available_api_servers()) ); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -1066,7 +1081,7 @@ success: function(data,textStatus){
 						<td>
 							<input name="rest_port" type="text" class="small-text" size="60" id="rest_port"
 								   value="<?php echo self::get_opt('rest_port'); ?>"/>
-							<span class="description"><?php _e('the listenning port of remote rest server.', self::textdomain) ?></span>
+							<span class="description"><?php _e('the listenning port of remote rest server.Generally it is 80.', self::textdomain) ?></span>
 						</td>
 					</tr>
 					
@@ -1075,7 +1090,7 @@ success: function(data,textStatus){
 						<td>
 							<input name="bucketname" type="text" class="regular-text" size="60" id="bucketname"
 								   value="<?php echo self::get_opt('bucketname'); ?>"/>
-							<span class="description"><?php _e('the bucketname.', self::textdomain) ?></span>
+							<span class="description"><?php _e('the bucketname you want to store your files to.', self::textdomain) ?></span>
 						</td>
 					</tr>
 					
@@ -1093,7 +1108,7 @@ success: function(data,textStatus){
 						<td>
 							<input name="rest_pwd" type="password" class="regular-text" size="60" id="rest_pwd"
 								   value=""/>
-							<span class="description"><?php _e('the password.', self::textdomain) ?></span>
+							<span class="description"><?php _e('the API user \'s password.will not be displayed here since filled and updated.', self::textdomain) ?></span>
 						</td>
 					</tr>
 
@@ -1101,12 +1116,39 @@ success: function(data,textStatus){
 						<th scope="row"><label for="form_api_secret"><?php _e('form api secret', self::textdomain) ?>:</label></th>
 						<td>
 							<input name="form_api_secret" type="password" class="regular-text" size="60" id="form_api_secret"
-								   value=""/>
-							<span class="description"><?php _e('the form_api_secret.', self::textdomain) ?></span>
+								   value="<?php echo self::get_opt('form_api_secret'); ?>"/>
+							<span class="description"><?php _e('the form API secret.Be aware that if you want to use the <strong>form API features</strong>,you MUST enable this in your Upyun dashboard.', self::textdomain) ?></span>
 						</td>
-					</tr>					
+					</tr>
 					<tr valign="top">
-						<th scope="row"><label for="rest_timeout"><?php _e('rest timeout', self::textdomain) ?>:</label></th>
+						<th scope="row"><label for="form_api_timeout"><?php _e('form API timeout(s)', self::textdomain) ?>:</label></th>
+						<td>
+							<input name="form_api_timeout" type="text" class="small-text" size="30" id="form_api_timeout"
+								   value="<?php echo self::get_opt('form_api_timeout'); ?>"/>
+							<span class="description"><?php _e('form API authorization timeout.the max authorized time (calculated in seconds) when upload file via form API.It depends on your computer\'s network condition.', self::textdomain); ?></span>
+						</td>
+					</tr>
+
+					<tr valign="top">
+						<th scope="row"><label for="form_api_content_max_length"><?php _e('form API content max length(MiB)', self::textdomain) ?>:</label></th>
+						<td>
+							<input name="form_api_content_max_length" type="text" class="small-text" size="30" id="form_api_content_max_length"
+								   value="<?php echo self::get_opt('form_api_content_max_length'); ?>"/>
+							<span class="description"><?php echo sprintf(__('the max file size (calculated in MiB) when upload file via form API.Currently,Upyun \'s limitation is %d MiB', self::textdomain), UpYun::FORM_API_MAX_CONTENT_LENGTH/1024/1024 ); ?></span>
+						</td>
+					</tr>
+										
+					<tr valign="top">
+						<th scope="row"><label for="form_api_allowed_ext"><?php _e('form API allowd ext', self::textdomain) ?>:</label></th>
+						<td>
+							<input name="form_api_allowed_ext" type="text" class="regular-text" size="30" id="form_api_allowed_ext"
+								   value="<?php echo self::get_opt('form_api_allowed_ext'); ?>"/>
+							<span class="description"><?php _e('form API allowed file extension.For example: <strong>jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z</strong>', self::textdomain); ?></span>
+						</td>
+					</tr>
+															
+					<tr valign="top">
+						<th scope="row"><label for="rest_timeout"><?php _e('rest timeout(s)', self::textdomain) ?>:</label></th>
 						<td>
 							<input name="rest_timeout" type="text" class="small-text" size="30" id="rest_timeout"
 								   value="<?php echo self::get_opt('rest_timeout'); ?>"/>
@@ -1148,14 +1190,14 @@ success: function(data,textStatus){
 		</div>
 		<div class="wrap">
 			<hr/>
-			<h2> <?php _e('Hacklog Remote Attachment Status', self::textdomain); ?></h2>
+			<h2> <?php _e('Hacklog Remote Attachment UpYun Status', self::textdomain); ?></h2>
 
 			<p style="color:#999999;font-size:14px;">
 		<?php _e('Space used on remote server:', self::textdomain); ?>
 		<?php 
 		if(self::setup_rest() ) 
 		{
-			$total_size = self::$fs->getBucketUsage();
+			$total_size = self::$fs->get_bucket_usage();
 			if( get_option(self::opt_space) != $total_size )
 			{
 				update_option(self::opt_space, $total_size);
