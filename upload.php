@@ -229,6 +229,15 @@ function hacklogra_upyun_media_upload_form( $errors = null )
 	<div class="clear"></div>
 </div>
 
+<div id="fileInfo" style="display:none; margin:10px auto;padding:10px 10px 5px;overflow: hidden;display: none;border-radius:10px;-moz-border-radius: 10px;border: 1px solid #ccc;box-shadow: 0 0 5px #ccc;background-image: -moz-linear-gradient(top, #ff9900, #c77801);background-image: -webkit-gradient(linear, left top, left bottom, from(#ff9900), to(#c77801));">
+	<ul style="margin:0;">
+		<li id="fileName"></li>
+		<li id="fileSize"></li>
+		<li id="fileType"></li>
+	</ul>
+</div>
+
+
 <span class="max-upload-size"><?php printf( __( 'Maximum upload file size: %d%s.' ), esc_html($upload_size_unit), esc_html($sizes[$u]) ); ?></span>
 <?php
 if ( ($is_IE || $is_opera) && $max_upload_size > 100 * 1024 * 1024 ) { ?>

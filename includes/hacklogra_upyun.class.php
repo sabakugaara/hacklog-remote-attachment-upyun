@@ -469,7 +469,7 @@ if ( $id )
 ?></div>
 
 <p class="savebutton ml-submit">
-<?php submit_button( __( 'Save all changes' ), 'button', 'save', false ); ?>
+	<?php submit_button( __( 'Save all changes' ), 'button', 'save', false ); ?>
 </p>
 </form>
 <script type="text/javascript">
@@ -479,7 +479,27 @@ if ( $id )
 		{
 			$('#file-form').attr('action','<?php echo $upyun_form_action_url;?>');
 		};
-		
+
+		var set_fileinfo = function()
+		{
+			var file = $('#async-upload')[0].files[0];
+			if( file == undefined )
+			{
+				return false;
+			}
+	        var fileSize = 0;
+
+	        if (file.size > 1024 * 1024)
+	          fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + ' MB';
+	        else
+	          fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + ' KB';
+
+	        document.getElementById('fileInfo').style.display = 'block';
+	        document.getElementById('fileName').innerHTML = '<strong>Name</strong>: ' + file.name;
+	        document.getElementById('fileSize').innerHTML = '<strong>Size</strong>: ' + fileSize;
+	        document.getElementById('fileType').innerHTML = '<strong>Type</strong>: ' + file.type;
+	        return file.name;
+		};
        $('#async-upload').change(function()
        {
        	var filename = $('#async-upload').val();
@@ -489,27 +509,30 @@ if ( $id )
        		$('#html-upload').attr('disabled',true);
        		return false;
        	}
+       	file_basename = set_fileinfo();
+       	filename = !file_basename ? file_basename : filename;
        	$.ajax(
-       		{url:ajaxurl,
+       	{
+           	url:ajaxurl,
 			type:'post',
 			data: {'action': 'hacklogra_upyun_signature', 'post_id': '<?php echo $post_id;?>','file': filename,'_wpnonce':$('#_wpnonce').val()},
 			dataType: 'json',
 			async: false,
 			cache: false,
 			timeout: 5*1000,
-success: function(data,textStatus){
-	if( data.error == 'yes')
-	{
-		alert('Connection eror!');
-		return false;
-	}
-	//alert( 'policy: ' + data.policy + 'signature: ' + data.signature );
-	$('#policy').val(data.policy);
-	$('#signature').val(data.signature);
-	set_upyun_form_api_action_url();
-	$('#html-upload').attr('disabled',false);
-	return true;
-},
+			success: function(data,textStatus){
+			if( data.error == 'yes')
+			{
+				alert('Connection eror!');
+				return false;
+			}
+			//alert( 'policy: ' + data.policy + 'signature: ' + data.signature );
+			$('#policy').val(data.policy);
+			$('#signature').val(data.signature);
+			set_upyun_form_api_action_url();
+			$('#html-upload').attr('disabled',false);
+			return true;
+			},
 			error: function(jqXHR, textStatus, errorThrown){
 				alert('error hook called. textStatus: ' + textStatus +"\n" + 'errorThrown: ' + errorThrown);
 				$('#html-upload').attr('disabled',true);
