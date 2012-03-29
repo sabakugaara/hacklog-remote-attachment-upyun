@@ -13,7 +13,10 @@ class UpYun {
 	private $api_domain = 'v0.api.upyun.com';
 	private $content_md5 = null;
 	private $file_secret = null;
+	private $form_api_content_range_max = 104857600;
+	private $form_api_allowed_ext = 'jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z';
 	public $timeout     = 30;
+	public $form_api_timeout = 300;
 	public $debug       = false;
 	public $errors;
 	public static $http;
@@ -35,14 +38,18 @@ class UpYun {
 				'username' => '', 
 				'password' => '',
 				'form_api_secret' => '',
-				'timeout' => '' ), $args );
+				'timeout' => $this->timeout,
+				'form_api_content_range_max'=> $this->form_api_content_range_max,
+				'form_api_allowed_ext'=> $this->form_api_allowed_ext,
+				'form_api_timeout'=> $this->form_api_timeout,
+					), $args );
 		
 		$this->bucketname = $new_args ['bucketname'];
 		$this->username = $new_args ['username'];
 		$this->password = md5 ( $new_args ['password'] );
 		$this->form_api_secret = $new_args['form_api_secret'];
-		$this->setTimeout ( $new_args ['timeout'] );
-		$this->setApiDomain ( $new_args ['api_domain'] );
+		$this->set_timeout ( $new_args ['timeout'] );
+		$this->set_api_domain ( $new_args ['api_domain'] );
 		$this->errors = new WP_Error();
 		$this->set_debug ( FALSE );
 		$this->check_param ();
@@ -76,7 +83,7 @@ class UpYun {
 	 *        	联通, v3.api.upyun.com 移动}
 	 *       	 return null;
 	 */
-	public function setApiDomain($domain) {
+	public function set_api_domain($domain) {
 		$this->api_domain = $domain;
 	}
 	
@@ -90,7 +97,7 @@ class UpYun {
 	 * @param $time 秒
 	 *       	 return null;
 	 */
-	public function setTimeout($time) {
+	public function set_timeout($time) {
 		$this->timeout = $time;
 	}
 	
@@ -99,7 +106,7 @@ class UpYun {
 	* @param $str （文件 MD5 校验码）
 	* return null;
 	*/
-	public function setContentMD5($str){
+	public function set_content_m5($str){
 		$this->content_md5 = $str;
 	}
 
@@ -159,17 +166,17 @@ class UpYun {
 	public function build_policy($args)
 	{
 		$default = array(
-			'expire' => 5, // 5 min
+			'expire' => $this->form_api_timeout, // 300 s
 			'path' => '/{year}/{mon}/{random}{.suffix}', // full relative path
-			'allow_file_ext' => 'jpg,jpeg,gif,png,mp4,flv,avi,doc,pdf,zip,rar,tar.gz,tar,bz2,7z',
-			'content_length_range' =>'0,104857600', // 10MB( 10485760) 20MB ( 20971520 ),最大为100MB ( 104857600 )
+			'allow_file_ext' => $this->form_api_allowed_ext,
+			'content_length_range' =>'0,' . $this->form_api_content_range_max, // 10MB( 10485760) 20MB ( 20971520 ),最大为100MB ( 104857600 )
 			'return_url' => WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php',
 			'notify_url' => '',
 			);
 		$args = array_merge($default,$args);
 		$policydoc = array(
 		"bucket" => $this->get_bucketname(), /// 空间名
-		"expiration" => time() + $args['expire']*60, /// 该次授权过期时间
+		"expiration" => time() + $args['expire'], /// 该次授权过期时间
 		"save-key" => $args['path'], /// 命名规则，/2011/12/随机.扩展名
 		"allow-file-type" => $args['allow_file_ext'], /// 仅允许上传图片
 		"content-length-range" => $args['content_length_range'] , /// 文件在 100K 以下
@@ -180,6 +187,7 @@ class UpYun {
 		$policy = base64_encode(json_encode($policydoc));  /// 注意 base64 编码后的 policy字符串中不包含换行符！
 		return $policy;
 	}
+	
 	/**
 	 * 连接处理逻辑
 	 * @todo 添加output_file支持( 荒野无灯 2012-02-06 )
@@ -193,7 +201,7 @@ class UpYun {
 	 *       	 GET 下载文件，可传递文件IO数据流
 	 * @return 请求返回字符串，失败返回 null （打开 debug 状态下遇到错误将中止程序执行）
 	 */
-	private function HttpAction($method, $uri, $datas, $output_file = null) 
+	private function http_action($method, $uri, $datas, $output_file = null) 
 	{
 		$http = self::get_http_object();
 		$r = array();
@@ -299,8 +307,8 @@ class UpYun {
 	 * 获取总体空间的占用信息
 	 * @return 空间占用量，失败返回 null
 	 */
-	public function getBucketUsage() {
-		return $this->getFolderUsage ( '/' );
+	public function get_bucket_usage() {
+		return $this->get_folder_usage ( '/' );
 	}
 	
 	/**
@@ -309,8 +317,8 @@ class UpYun {
 	 * @param $path 目标路径
 	 * @return 空间占用量，失败返回 null
 	 */
-	public function getFolderUsage($path) {
-		$r = $this->HttpAction ( 'GET', "{$path}?usage", null );
+	public function get_folder_usage($path) {
+		$r = $this->http_action ( 'GET', "{$path}?usage", null );
 		if ( $r == '')
 			return null;
 		return floatval ( $r );
@@ -325,9 +333,9 @@ class UpYun {
 	 * @param $auto_mkdir=false 是否自动创建父级目录
 	 *       	 return true or false
 	 */
-	public function writeFile($file, $datas, $auto_mkdir = false) {
+	public function write_file($file, $datas, $auto_mkdir = false) {
 		$this->auto_mkdir = $auto_mkdir;
-		$r = $this->HttpAction ( 'PUT', $file, $datas );
+		$r = $this->http_action ( 'PUT', $file, $datas );
 		return ! is_null ( $r );
 	}
 	
@@ -339,8 +347,8 @@ class UpYun {
 	 *       	 null，结果返回文件内容，如设置文件数据流，将返回 true or false）
 	 *       	 return 文件内容 或 null
 	 */
-	public function readFile($file, $output_file = null) {
-		return $this->HttpAction ( 'GET', $file, null, $output_file );
+	public function read_file($file, $output_file = null) {
+		return $this->http_action ( 'GET', $file, null, $output_file );
 	}
 	
 	/**
@@ -349,8 +357,8 @@ class UpYun {
 	 * @param $path 目录路径
 	 * @return array 数组 或 null
 	 */
-	public function readDir($path) {
-		$r = $this->HttpAction ( 'GET', $path, null );
+	public function read_dir($path) {
+		$r = $this->http_action ( 'GET', $path, null );
 		if (is_null ( $r ))
 			return null;
 		$rs = explode ( "\n", $r );
@@ -375,8 +383,8 @@ class UpYun {
 	 * @param $file 文件路径（包含文件名）
 	 * @return true or false
 	 */
-	public function deleteFile($file) {
-		$r = $this->HttpAction ( 'DELETE', $file, null );
+	public function delete_file($file) {
+		$r = $this->http_action ( 'DELETE', $file, null );
 		return ! is_null ( $r );
 	}
 	
@@ -387,9 +395,9 @@ class UpYun {
 	 * @param $auto_mkdir=false 是否自动创建父级目录
 	 *       	 return true or false
 	 */
-	public function mkDir($path, $auto_mkdir = false) {
+	public function mkdir($path, $auto_mkdir = false) {
 		$this->auto_mkdir = $auto_mkdir;
-		$r = $this->HttpAction ( 'PUT', $path, 'folder:true' );
+		$r = $this->http_action ( 'PUT', $path, 'folder:true' );
 		return ! is_null ( $r );
 	}
 	
@@ -399,8 +407,8 @@ class UpYun {
 	 * @param $path 目录路径
 	 * @return true or false
 	 */
-	public function rmDir($dir) {
-		$r = $this->HttpAction ( 'DELETE', $dir, null );
+	public function rmdir($dir) {
+		$r = $this->http_action ( 'DELETE', $dir, null );
 		return ! is_null ( $r );
 	}
 	
@@ -427,7 +435,7 @@ class UpYun {
 			return FALSE;
 		}
 		//return null if failed. otherwise it may be null string '' .
-		$result = $this->HttpAction ( 'GET', "/", null );
+		$result = $this->http_action ( 'GET', "/", null );
 		if ( is_null($result) ) 
 		{
 			//if there is NO upyun_authentication_error , set the default error.
@@ -453,7 +461,7 @@ class UpYun {
 	 * @param string $file the full file path relative to the bucket main dir. 
 	 */
 	public function is_file($file) {
-		$file_content = $this->readFile ( $file );
+		$file_content = $this->read_file ( $file );
 		if (! empty ( $file_content )) {
 			return TRUE;
 		} else {
@@ -466,7 +474,7 @@ class UpYun {
 	 * @param string $file the full file path relative to the bucket main dir.
 	 */
 	public function size($file) {
-		$file_content = $this->readFile ( $file );
+		$file_content = $this->read_file ( $file );
 		return strlen ( $file_content );
 	}
 	
@@ -485,7 +493,7 @@ class UpYun {
 	 * @param int $perm ,this param is not used by upyun server...
 	 */
 	public function put_contents($file, $data, $perm = 0744) {
-		return $this->writeFile ( $file, $data, TRUE );
+		return $this->write_file ( $file, $data, TRUE );
 	}
 	
 	/**
@@ -495,7 +503,7 @@ class UpYun {
 	 * @param unknown_type $another_notused this param is not used by upyun server...
 	 */
 	public function delete($file, $notused = '', $another_notused = '') {
-		return $this->deleteFile ( $file );
+		return $this->delete_file ( $file );
 	}
 	
 	static function &get_http_object() {
