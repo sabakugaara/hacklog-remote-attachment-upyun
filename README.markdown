@@ -29,15 +29,16 @@ use this plugin, you can upload any files to remote ftp servers(be aware that yo
 * with this plugin,you can move all your local server files to remote server.
 * after you've uninstall this plugin,you can move remote server files to local server if you'd like to do so.
 
-For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5001 "plugin homepage") for any questions about the plugin.
+For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5204 "plugin homepage") for any questions about the plugin.
 
 [installation guide](http://ihacklog.com/?p=4993 "installation guide") 
+如果你只是需要远程附件功能的支持，而并不想使用又拍云的服务，可以尝试下使用
+[Hacklog Remote Attachment <支持FTP + HTTP服务器>](http://ihacklog.com/?p=5001 "plugin homepage")
 
 * version 1.1.0 added compatibility with watermark plugins
 * version 1.2.0 added duplicated file checking,so that the existed remote files will not be overwrote.
 * version 1.2.1 fixed the bug when uploading new theme or plugin this plugin may cause it to fail.
 
-* 1.0.2 增加自动创建远程目录功能。解决在某些FTP服务器出现“在远程服务器创建目录失败”的问题。
 * 1.1.0 增加与水印插件的兼容性，使上传到远程服务器的图片同样可以加上水印
 * 1.2.0 增加重复文件检测，避免同名文件被覆盖。更新和完善了帮助信息。
 * 1.2.1 修正在后台上传主题或插件时的bug.
