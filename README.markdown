@@ -9,7 +9,7 @@
 * Tags: attachment,manager,admin,images,thumbnail,ftp,remote
 * Requires at least: 3.3
 * Tested up to: 3.3.1
-* Stable tag: 1.4.1
+* Stable tag: 1.4.2
 
 ------------------------------------------------------------
 
@@ -79,12 +79,17 @@ see
 
 
 ### Upgrade Notice
+#### 1.4.x upgrade to 1.4.2
+增加空间TOKEN防盗链功能支持
 
 #### 1.3.0 upgrade to 1.4.0
 如果要使用**表单 API 功能**,注意在又拍云空间管理里面开启表单 API功能，并在插件后台选项中更新表单 API密匙. 
 
 
 ### Changelog
+
+### 1.4.2
+增加空间TOKEN防盗链功能支持
 
 #### 1.4.1
 * added: HTML5 file info detect.

@@ -22,7 +22,7 @@ class hacklogra_upyun
 	const opt_space   = 'hacklogra_remote_filesize';
 	//new option name
 	const opt_primary = 'hacklogra_upyun_options';
-	const version     = '1.4.0-upyun-ported-from-1.2.6-origin';
+	const version     = '1.4.2-upyun-ported-from-1.2.6-origin';
 	private static $img_ext          = array('jpg', 'jpeg', 'png', 'gif', 'bmp');
 	private static $rest_user        = 'admin';
 	private static $rest_pwd         = '4d4173594c77453d';
@@ -63,7 +63,6 @@ class hacklogra_upyun
 		add_action('wp_ajax_hacklogra_upyun_signature', array(__CLASS__, 'return_signature'));
 		add_action('media_buttons', array(__CLASS__, 'add_media_button'), 11);
         add_filter('the_content',array(__CLASS__,'sign_post_url'));
-        //add_filter('wp_get_attachment_url',array(__CLASS__,'sign_attachment_url'), 999);
 	}
 
 ############################## PRIVATE FUNCTIONS ##############################################
@@ -600,7 +599,7 @@ if ( $id )
 
     public static function sign_post_url($content)
     {
-        if(preg_match_all("@" . self::$remote_baseurl . "[^'\"]+@i",$content,$matches))
+        if(!empty(self::$anti_leech_token) && preg_match_all("@" . self::$remote_baseurl . "[^'\"]+@i",$content,$matches))
         {
             if( isset($matches[0]) && count($matches[0]) > 0)
             {
@@ -775,7 +774,7 @@ if ( $id )
 	{
         self::setup_rest();
 		$url = str_replace(self::$local_baseurl, self::$remote_baseurl, $url);
-        $signed_url = self::sign_url($url);
+        !empty(self::$anti_leech_token) && $signed_url = self::sign_url($url);
 		return $signed_url;
 	}
 
@@ -1245,11 +1244,11 @@ if ( $id )
                     <!-- anti-leech -->
 
 					<tr valign="top">
-						<th scope="row"><label for="anti_leech_token"><?php _e('anti leech token', self::textdomain) ?>:</label></th>
+						<th scope="row"><label for="anti_leech_token"><?php _e('anti leech token key', self::textdomain) ?>:</label></th>
 						<td>
 							<input name="anti_leech_token" type="text" class="regular-text" size="60" id="anti_leech_token"
 								   value="<?php echo self::get_opt('anti_leech_token'); ?>"/>
-							<span class="description"><?php _e('the anti leech token your set in upyun panel', self::textdomain) ?></span>
+							<span class="description"><?php _e('the anti leech token key your set in upyun panel', self::textdomain) ?></span>
 						</td>
 					</tr>
 					<tr valign="top">

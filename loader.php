@@ -3,7 +3,7 @@
 Plugin Name: Hacklog Remote Attachment Upyun
 Plugin URI: http://ihacklog.com/?p=5204 
 Description: WordPress 远程附件上传插件for Upyun(又拍云).Remote attachment support for WordPress.Support Multisite. 
-Version: 1.4.1 
+Version: 1.4.2
 Author: 荒野无灯 
 Author URI: http://ihacklog.com/
 */
