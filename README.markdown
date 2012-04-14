@@ -47,6 +47,7 @@ For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5
 * 1.2.9 修复Windows Live Writer 上传图片时url不正确的bug
 * 1.3.0 修复首次使用插件时，又拍云空间使用量为0时显示“测试连接失败”的bug.增加更详细的错误信息提示。
 * 1.4.0 增加form API上传支持，可上传100MB以内大小的文件（又拍云form API目前最大只支持100MB）
+* 1.4.2 增加空间TOKEN防盗链功能支持
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
 [安装指导](http://ihacklog.com/?p=4993 "安装指导") 
@@ -89,7 +90,7 @@ see
 ### Changelog
 
 ### 1.4.2
-增加空间TOKEN防盗链功能支持
+* added: TOKEN based anti-leeching feature support.
 
 #### 1.4.1
 * added: HTML5 file info detect.
