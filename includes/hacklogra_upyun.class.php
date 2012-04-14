@@ -32,6 +32,8 @@ class hacklogra_upyun
 	private static $form_api_content_max_length = 100;
 	private static $form_api_allowed_ext = 'jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z';
 	private static $form_api_timeout = 300;
+    private static $anti_leech_token = '';
+    private static $anti_leech_timeout = 600;
 	private static $rest_port        = 80 ;
 	private static $rest_timeout     = 30;
 	private static $subdir           = '';
@@ -50,7 +52,7 @@ class hacklogra_upyun
 		self::init();
 		//this should always check
 		add_action('admin_notices', array(__CLASS__, 'check_rest_connection'));
-		//should load before 'admin_menu' hook ... so,use init hook  
+		//should load before 'admin_menu' hook ... so,use init hook
 		add_action('init', array(__CLASS__, 'load_textdomain'));
 		//menu
 		add_action('admin_menu', array(__CLASS__, 'plugin_menu'));
@@ -74,7 +76,7 @@ class hacklogra_upyun
 		$cypher->Key = AUTH_KEY;
 		return $cypher->encrypt($plain_text);
 	}
-	
+
 	private static function decrypt($encrypted )
 	{
 		if( !class_exists('Crypt') )
@@ -85,7 +87,7 @@ class hacklogra_upyun
 		$cypher->Key = AUTH_KEY;
 		return $cypher->decrypt( $encrypted );
 	}
-	
+
 	private static function update_options()
 	{
 		$value = self::get_default_opts();
@@ -146,9 +148,11 @@ class hacklogra_upyun
 			'form_api_secret' => self::$form_api_secret,
 			'form_api_content_max_length' => self::$form_api_content_max_length,
 			'form_api_allowed_ext'=> self::$form_api_allowed_ext,
-			'form_api_timeout'=> self::$form_api_timeout,		
+			'form_api_timeout'=> self::$form_api_timeout,
+            'anti_leech_token' => self::$anti_leech_token,
+            'anti_leech_timeout'=> self::$anti_leech_timeout,
 			'rest_server' => self::$rest_server,
-			'bucketname' => self::$bucketname,	
+			'bucketname' => self::$bucketname,
 			'rest_port' => self::$rest_port,
 			'rest_timeout' => self::$rest_timeout,
 			'rest_remote_path' => self::$rest_remote_path,
@@ -196,7 +200,7 @@ class hacklogra_upyun
 	 * like  wp_handle_upload_error in file.php under wp-admin/includes
 	 * @param type $file
 	 * @param type $message
-	 * @return type 
+	 * @return type
 	 */
 	function handle_upload_error($message)
 	{
@@ -207,10 +211,10 @@ class hacklogra_upyun
 	{
 		return new IXR_Error(500, $errorString);
 	}
-	
+
 	/**
 	 * report upload error
-	 * @return type 
+	 * @return type
 	 */
 	private static function raise_upload_error()
 	{
@@ -227,7 +231,7 @@ class hacklogra_upyun
 
 	/**
 	 * report rest connection error
-	 * @return type 
+	 * @return type
 	 */
 	private static function raise_connection_error()
 	{
@@ -270,6 +274,8 @@ class hacklogra_upyun
 		self::$form_api_allowed_ext = $opts['form_api_allowed_ext'];
 		self::$form_api_content_max_length = $opts['form_api_content_max_length'];
 		self::$form_api_timeout = $opts['form_api_timeout'];
+        self::$anti_leech_token = $opts['anti_leech_token'];
+        self::$anti_leech_timeout = $opts['anti_leech_timeout'];
 		self::$rest_server = $opts['rest_server'];
 		self::$bucketname = $opts['bucketname'];
 		self::$rest_port = $opts['rest_port'];
@@ -355,7 +361,7 @@ public static function handle_form_api_upload($post_id, $post_data = array() )
 				if ( !is_wp_error($id) ) {
 					wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
 				}
-	
+
 			}
 		}
 		else
@@ -375,7 +381,7 @@ public static function return_signature()
 	$post_id = $_POST['post_id'];
 	$filename = basename($_POST['file']);
 	$unique_filename = self::unique_filename(self::$rest_remote_path . self::$subdir, $filename);
-	$policy = self::$fs->build_policy( 
+	$policy = self::$fs->build_policy(
 		array('path'=> '/'. self::$rest_remote_path . self::$subdir. '/'. $unique_filename,
 			'return_url' => WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php?post_id='.$post_id,
 			)  );
@@ -407,11 +413,11 @@ public static function media_upload_type_form_upyun($type = 'file', $errors = nu
 	{
 		return self::raise_connection_error();
 	}
-	
+
 	media_upload_header();
-	
+
 	$upyun_form_action_url = 'http://' . self::$fs->get_api_domain(). '/'. self::$fs->get_bucketname() .'/';
-	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) && isset($_GET['sign']) ) 
+	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) && isset($_GET['sign']) )
 	{
 		$form_action_url = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php?post_id=' . $post_id .'&TB_iframe=1&width=640&height=451';
 	}
@@ -419,7 +425,7 @@ public static function media_upload_type_form_upyun($type = 'file', $errors = nu
 	{
 		$form_action_url = $upyun_form_action_url;
 	}
-	
+
 	$form_class = 'media-upload-form type-form validate';
 
 	//if ( get_user_setting('uploader') )
@@ -455,9 +461,9 @@ jQuery(function($){
 
 <div id="media-items">
 <?php
-if ( $id ) 
+if ( $id )
 {
-	if ( !is_wp_error($id) ) 
+	if ( !is_wp_error($id) )
 	{
 		add_filter('attachment_fields_to_edit', 'media_post_single_attachment_fields_to_edit', 10, 2);
 		echo get_media_items( $id, $errors );
@@ -579,6 +585,10 @@ if ( $id )
 		return isset($opts[$key]) ? $opts[$key] : $defaut;
 	}
 
+    public static function send_site_anti_leech_cookie()
+    {
+        self::$fs->set_anti_leech_token_sign_cookie('/',SITECOOKIEPATH);
+    }
 	/**
 	 * humanize file size.
 	 * @static
@@ -609,6 +619,8 @@ if ( $id )
 	 */
 	public static function admin_init()
 	{
+        self::setup_rest();
+        self::send_site_anti_leech_cookie();
 		//DO NOT HOOK the update or upgrade page for that they may upload zip file.
 		$current_page = basename($_SERVER['SCRIPT_FILENAME']);
 		switch ($current_page)
@@ -653,6 +665,8 @@ if ( $id )
 					'form_api_allowed_ext'=> self::$form_api_allowed_ext,
 					'form_api_content_max_length' => self::$form_api_content_max_length ,
 					'form_api_timeout' => self::$form_api_timeout ,
+                    'anti_leech_token' => self::$anti_leech_token,
+                    'anti_leech_timeout' => self::$anti_leech_timeout,
 				);
 			if( null != $args )
 			{
@@ -742,7 +756,7 @@ if ( $id )
 		if (defined('XMLRPC_REQUEST'))
 		{
 			$file['file'] = self::$local_path . '/' . $file['file'];
-		}		
+		}
 		if (!self::connect_remote_server())
 		{
 			//failed ,delete the orig file
@@ -795,7 +809,7 @@ if ( $id )
 				}
 			}
 		}
-		
+
 		$file['url'] = str_replace(self::$local_url, self::$remote_url, $file['url']);
 		//如果是图片，此处不处理，因为要与水印插件兼容的原因　
 		if (self::is_image_file($file['file']))
@@ -883,7 +897,7 @@ if ( $id )
 	/**
 	 * upload single file to remote  rest  server, used by upload_images
 	 * @param type $relative_path the path relative to upload basedir
-	 * @return type 
+	 * @return type
 	 */
 	private static function upload_file($relative_path)
 	{
@@ -991,7 +1005,7 @@ if ( $id )
 	 */
 	public function add_my_contextual_help()
 	{
-		//WP_Screen id:  'settings_page_hacklog-remote-attachment/loader' 
+		//WP_Screen id:  'settings_page_hacklog-remote-attachment/loader'
 		$identifier = md5(HACKLOG_RA_UPYUN_LOADER);
 		$current_screen_id = 'settings_page_' . $identifier;
 		$text = '<p><h2>' . __('Explanation of some Options', self::textdomain) . '</h2></p>' .
@@ -1129,7 +1143,7 @@ if ( $id )
 							<span class="description"><?php _e('the listenning port of remote rest server.Generally it is 80.', self::textdomain) ?></span>
 						</td>
 					</tr>
-					
+
 					<tr valign="top">
 						<th scope="row"><label for="bucketname"><?php _e('bucketname', self::textdomain) ?>:</label></th>
 						<td>
@@ -1138,7 +1152,7 @@ if ( $id )
 							<span class="description"><?php _e('the bucketname you want to store your files to.', self::textdomain) ?></span>
 						</td>
 					</tr>
-					
+
 					<tr valign="top">
 						<th scope="row"><label for="rest_user"><?php _e('REST API username', self::textdomain) ?>:</label></th>
 						<td>
@@ -1182,7 +1196,7 @@ if ( $id )
 							<span class="description"><?php echo sprintf(__('the max file size (calculated in MiB) when upload file via form API.Currently,Upyun \'s limitation is %d MiB', self::textdomain), UpYun::FORM_API_MAX_CONTENT_LENGTH/1024/1024 ); ?></span>
 						</td>
 					</tr>
-										
+
 					<tr valign="top">
 						<th scope="row"><label for="form_api_allowed_ext"><?php _e('form API allowd ext', self::textdomain) ?>:</label></th>
 						<td>
@@ -1191,7 +1205,26 @@ if ( $id )
 							<span class="description"><?php _e('form API allowed file extension.For example: <strong>jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z</strong>', self::textdomain); ?></span>
 						</td>
 					</tr>
-															
+                    <!-- anti-leech -->
+
+					<tr valign="top">
+						<th scope="row"><label for="anti_leech_token"><?php _e('anti leech token', self::textdomain) ?>:</label></th>
+						<td>
+							<input name="anti_leech_token" type="text" class="regular-text" size="60" id="anti_leech_token"
+								   value="<?php echo self::get_opt('anti_leech_token'); ?>"/>
+							<span class="description"><?php _e('the anti leech token your set in upyun panel', self::textdomain) ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><label for="anti_leech_timeout"><?php _e('anti leech timeout(s)', self::textdomain) ?>:</label></th>
+						<td>
+							<input name="anti_leech_timeout" type="text" class="small-text" size="30" id="anti_leech_timeout"
+								   value="<?php echo self::get_opt('anti_leech_timeout'); ?>"/>
+							<span class="description"><?php _e('anti leech timeout', self::textdomain); ?></span>
+						</td>
+					</tr>
+
+
 					<tr valign="top">
 						<th scope="row"><label for="rest_timeout"><?php _e('rest timeout(s)', self::textdomain) ?>:</label></th>
 						<td>
@@ -1239,8 +1272,8 @@ if ( $id )
 
 			<p style="color:#999999;font-size:14px;">
 		<?php _e('Space used on remote server:', self::textdomain); ?>
-		<?php 
-		if(self::setup_rest() ) 
+		<?php
+		if(self::setup_rest() )
 		{
 			$total_size = self::$fs->get_bucket_usage();
 			if( get_option(self::opt_space) != $total_size )
@@ -1248,7 +1281,7 @@ if ( $id )
 				update_option(self::opt_space, $total_size);
 			}
 			echo self::human_size($total_size );
-		}  
+		}
 		else
 		{
 			echo '<span style="color:#FF0000;">';
