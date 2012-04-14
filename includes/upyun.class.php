@@ -246,19 +246,6 @@ class UpYun {
         return $sign;
     }
 
-    private function get_uri_from_url($url='/')
-    {
-        if( '/' != $url )
-        {
-        $uri = substr($url,-strlen($this->get_api_domain().'/'. $this->get_bucketname()) );
-        }
-        else
-        {
-            $uri = '/';
-        }
-        return $uri;
-    }
-
 
     /**
      * set_anti_leech_token_sign_url
@@ -266,10 +253,10 @@ class UpYun {
      * @param string $url
      * @return void
      */
-    public function set_anti_leech_token_sign_url($url = '')
+    public function set_anti_leech_token_sign_uri($uri = '/')
     {
-        $uri = $this->get_uri_from_url($url);
-        return $url . '?' . self::TOKEN_NAME .'='. $this->get_anti_leech_token_sign($uri);
+        $uri = ltrim($uri,'/');
+        return $uri . '?' . self::TOKEN_NAME .'='. $this->get_anti_leech_token_sign($uri);
     }
 
     /**
@@ -278,9 +265,9 @@ class UpYun {
      * @param string $url
      * @return void
      */
-    public function set_anti_leech_token_sign_cookie($url='/',$cookie_path='/',$cookie_domain='')
+    public function set_anti_leech_token_sign_cookie($uri='/',$cookie_path='/',$cookie_domain='')
     {
-        $uri = $this->get_uri_from_url($url);
+        $uri = ltrim($uri,'/');
         setcookie(self::TOKEN_NAME ,$this->get_anti_leech_token_sign($uri),time() + $this->anti_leech_timeout ,'/');
     }
 

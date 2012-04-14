@@ -62,6 +62,8 @@ class hacklogra_upyun
 		add_filter('wp_get_attachment_url', array(__CLASS__, 'replace_baseurl'), -999);
 		add_action('wp_ajax_hacklogra_upyun_signature', array(__CLASS__, 'return_signature'));
 		add_action('media_buttons', array(__CLASS__, 'add_media_button'), 11);
+        add_filter('the_content',array(__CLASS__,'sign_post_url'));
+        //add_filter('wp_get_attachment_url',array(__CLASS__,'sign_attachment_url'), 999);
 	}
 
 ############################## PRIVATE FUNCTIONS ##############################################
@@ -584,11 +586,46 @@ if ( $id )
 		$opts = get_option(self::opt_primary);
 		return isset($opts[$key]) ? $opts[$key] : $defaut;
 	}
-
-    public static function send_site_anti_leech_cookie()
+    private static function sign_url( $url)
     {
-        self::$fs->set_anti_leech_token_sign_cookie('/',SITECOOKIEPATH);
+        if( '.' !== self::$http_remote_path)
+        {
+            $baseurl = str_replace( '/' .self::$http_remote_path,'',self::$remote_baseurl);
+        }
+        $file_path = substr($url,strlen($baseurl));
+        $signed_url = $baseurl .'/' . self::$fs->set_anti_leech_token_sign_uri($file_path);
+        return $signed_url;
     }
+
+
+    public static function sign_post_url($content)
+    {
+        if(preg_match_all("@" . self::$remote_baseurl . "[^'\"]+@i",$content,$matches))
+        {
+            if( isset($matches[0]) && count($matches[0]) > 0)
+            {
+                $urls = $matches[0];
+                self::setup_rest();
+                foreach($urls as $url)
+                {
+                    $signed_url = self::sign_url($url);
+                    $content = str_replace($url,$signed_url,$content);
+                }
+            }
+        }
+        return $content;
+    }
+
+    public static function sign_attachment_url($url)
+    {
+        if( strcasecmp(substr($url,0,strlen(self::$remote_baseurl)),self::$remote_baseurl) == 0 )
+        {
+            self::setup_rest();
+            $signed_url = self::sign_url($url);
+        }
+        return $url;
+    }
+
 	/**
 	 * humanize file size.
 	 * @static
@@ -619,8 +656,6 @@ if ( $id )
 	 */
 	public static function admin_init()
 	{
-        self::setup_rest();
-        self::send_site_anti_leech_cookie();
 		//DO NOT HOOK the update or upgrade page for that they may upload zip file.
 		$current_page = basename($_SERVER['SCRIPT_FILENAME']);
 		switch ($current_page)
@@ -736,10 +771,12 @@ if ( $id )
 	 * @param $html
 	 * @return mixed
 	 */
-	public static function replace_baseurl($html)
+	public static function replace_baseurl($url)
 	{
-		$html = str_replace(self::$local_baseurl, self::$remote_baseurl, $html);
-		return $html;
+        self::setup_rest();
+		$url = str_replace(self::$local_baseurl, self::$remote_baseurl, $url);
+        $signed_url = self::sign_url($url);
+		return $signed_url;
 	}
 
 	/**
