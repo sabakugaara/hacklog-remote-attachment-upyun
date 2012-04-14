@@ -258,6 +258,18 @@ class UpYun {
         $uri = ltrim($uri,'/');
         return $uri . '?' . self::TOKEN_NAME .'='. $this->get_anti_leech_token_sign($uri);
     }
+    
+    public function is_url_token_signed($url = '')
+    {
+    	if(strpos($url, self::TOKEN_NAME) > 0 )
+    	{
+    		return TRUE;
+    	}
+    	else
+    	{
+    		return FALSE;
+    	}
+    }
 
     /**
      * set_anti_leech_token_sign_cookie
@@ -268,7 +280,7 @@ class UpYun {
     public function set_anti_leech_token_sign_cookie($uri='/',$cookie_path='/',$cookie_domain='')
     {
         $uri = ltrim($uri,'/');
-        setcookie(self::TOKEN_NAME ,$this->get_anti_leech_token_sign($uri),time() + $this->anti_leech_timeout ,'/');
+        setcookie( self::TOKEN_NAME ,$this->get_anti_leech_token_sign($uri),time() + $this->anti_leech_timeout ,'/');
     }
 
 	/**

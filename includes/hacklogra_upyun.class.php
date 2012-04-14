@@ -585,8 +585,13 @@ if ( $id )
 		$opts = get_option(self::opt_primary);
 		return isset($opts[$key]) ? $opts[$key] : $defaut;
 	}
+	
     private static function sign_url( $url)
     {
+    	if( self::$fs->is_url_token_signed($url) )
+    	{
+    		return $url;
+    	}
         if( '.' !== self::$http_remote_path)
         {
             $baseurl = str_replace( '/' .self::$http_remote_path,'',self::$remote_baseurl);
@@ -620,7 +625,7 @@ if ( $id )
         if( strcasecmp(substr($url,0,strlen(self::$remote_baseurl)),self::$remote_baseurl) == 0 )
         {
             self::setup_rest();
-            $signed_url = self::sign_url($url);
+            $url = self::sign_url($url);
         }
         return $url;
     }
@@ -772,10 +777,9 @@ if ( $id )
 	 */
 	public static function replace_baseurl($url)
 	{
-        self::setup_rest();
 		$url = str_replace(self::$local_baseurl, self::$remote_baseurl, $url);
-        !empty(self::$anti_leech_token) && $signed_url = self::sign_url($url);
-		return $signed_url;
+        !empty(self::$anti_leech_token) && !is_admin() && self::setup_rest() && $url = self::sign_url($url);
+		return $url;
 	}
 
 	/**
