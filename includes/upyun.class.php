@@ -258,7 +258,7 @@ class UpYun {
         $uri = ltrim($uri,'/');
         return $uri . '?' . self::TOKEN_NAME .'='. $this->get_anti_leech_token_sign($uri);
     }
-    
+
     public function is_url_token_signed($url = '')
     {
     	if(strpos($url, self::TOKEN_NAME) > 0 )

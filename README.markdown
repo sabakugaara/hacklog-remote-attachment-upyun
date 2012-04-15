@@ -31,7 +31,7 @@ use this plugin, you can upload any files to remote ftp servers(be aware that yo
 
 For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5204 "plugin homepage") for any questions about the plugin.
 
-[installation guide](http://ihacklog.com/?p=4993 "installation guide") 
+[installation guide](http://ihacklog.com/?p=4993 "installation guide")
 如果你只是需要远程附件功能的支持，而并不想使用又拍云的服务，可以尝试下使用
 [Hacklog Remote Attachment <支持FTP + HTTP服务器>](http://ihacklog.com/?p=5001 "plugin homepage")
 
@@ -48,9 +48,10 @@ For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5
 * 1.3.0 修复首次使用插件时，又拍云空间使用量为0时显示“测试连接失败”的bug.增加更详细的错误信息提示。
 * 1.4.0 增加form API上传支持，可上传100MB以内大小的文件（又拍云form API目前最大只支持100MB）
 * 1.4.2 增加空间TOKEN防盗链功能支持
+* 1.4.3 修复同一地方多处调用url时重复签名的bug
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
-[安装指导](http://ihacklog.com/?p=4993 "安装指导") 
+[安装指导](http://ihacklog.com/?p=4993 "安装指导")
 
 ### Installation
 
@@ -70,13 +71,13 @@ You can visit [plugin homepage](http://ihacklog.com/?p=5001 "plugin homepage") f
 ![截图2](hacklog-remote-attachment-upyun/raw/master/screenshot-2.png "截图2")
 
 
-  
+
 
 
 
 ### Frequently Asked Questions
-see 
-[Hacklog Remote Attachment FAQ](http://ihacklog.com/?p=5001 "Hacklog Remote Attachment FAQ") 
+see
+[Hacklog Remote Attachment FAQ](http://ihacklog.com/?p=5001 "Hacklog Remote Attachment FAQ")
 
 
 ### Upgrade Notice
@@ -84,10 +85,13 @@ see
 增加空间TOKEN防盗链功能支持
 
 #### 1.3.0 upgrade to 1.4.0
-如果要使用**表单 API 功能**,注意在又拍云空间管理里面开启表单 API功能，并在插件后台选项中更新表单 API密匙. 
+如果要使用**表单 API 功能**,注意在又拍云空间管理里面开启表单 API功能，并在插件后台选项中更新表单 API密匙.
 
 
 ### Changelog
+
+### 1.4.3
+* fixed: the bug that duplicated signe the same url.
 
 ### 1.4.2
 * added: TOKEN based anti-leeching feature support.
@@ -121,7 +125,7 @@ see
 * fixe: curl connection timeout will return '',change the message to more detailed one[class UpYun].
 
 #### 1.2.3
-* changed: load_textdomain param 3 uses basename(dirname()) instead of plugin_basename 
+* changed: load_textdomain param 3 uses basename(dirname()) instead of plugin_basename
 * fixed: trim spaces on options
 * improved: Prevent direct access to files
 * changed: uses upyun HTTP REST API to create and delete directory,files
@@ -130,15 +134,3 @@ see
 
 #### 1.2.2
 * ported from Hacklog Remote Attachment
-
-
-
-
-
-
-
-
-
-
-
-

@@ -585,13 +585,9 @@ if ( $id )
 		$opts = get_option(self::opt_primary);
 		return isset($opts[$key]) ? $opts[$key] : $defaut;
 	}
-	
+
     private static function sign_url( $url)
     {
-    	if( self::$fs->is_url_token_signed($url) )
-    	{
-    		return $url;
-    	}
         if( '.' !== self::$http_remote_path)
         {
             $baseurl = str_replace( '/' .self::$http_remote_path,'',self::$remote_baseurl);
@@ -609,9 +605,16 @@ if ( $id )
             if( isset($matches[0]) && count($matches[0]) > 0)
             {
                 $urls = $matches[0];
+                //strip the duplicaated urls
+                $urls = array_unique($urls);
                 self::setup_rest();
                 foreach($urls as $url)
                 {
+                    //the determine should be here ,not sign_url function
+                    if( self::$fs->is_url_token_signed($url) )
+                    {
+                        continue;
+                    }
                     $signed_url = self::sign_url($url);
                     $content = str_replace($url,$signed_url,$content);
                 }
