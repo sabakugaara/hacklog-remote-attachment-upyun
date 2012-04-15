@@ -600,7 +600,7 @@ if ( $id )
 
     public static function sign_post_url($content)
     {
-        if(!empty(self::$anti_leech_token) && preg_match_all("@" . self::$remote_baseurl . "[^'\"]+@i",$content,$matches))
+        if(!empty(self::$anti_leech_token) && preg_match_all("@" . self::$remote_baseurl . "[^'\"\[]+@i",$content,$matches))
         {
             if( isset($matches[0]) && count($matches[0]) > 0)
             {
@@ -620,6 +620,7 @@ if ( $id )
                 }
             }
         }
+        //var_dump($content);
         return $content;
     }
 
