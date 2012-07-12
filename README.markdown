@@ -8,8 +8,8 @@
 * Donate link: http://ihacklog.com/donate
 * Tags: attachment,manager,admin,images,thumbnail,ftp,remote
 * Requires at least: 3.3
-* Tested up to: 3.3.1
-* Stable tag: 1.4.3
+* Tested up to: 3.4.1
+* Stable tag: 1.4.4
 
 ------------------------------------------------------------
 
@@ -49,6 +49,7 @@ For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5
 * 1.4.0 增加form API上传支持，可上传100MB以内大小的文件（又拍云form API目前最大只支持100MB）
 * 1.4.2 增加空间TOKEN防盗链功能支持
 * 1.4.3 修复同一地方多处调用url时重复签名的bug
+* 1.4.4 修复点击Tools区的链接时，提示“没有权限”的BUG.
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
 [安装指导](http://ihacklog.com/?p=4993 "安装指导")
@@ -91,7 +92,11 @@ see
 ### Changelog
 
 ### 1.4.3
-* fixed: the bug that duplicated signe the same url.
+* fixed: the bug that say "you have no permission to do this" when click the
+  link in Tools area.
+
+### 1.4.3
+* fixed: the bug that duplicated sign the same url.
 
 ### 1.4.2
 * added: TOKEN based anti-leeching feature support.

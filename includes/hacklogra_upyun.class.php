@@ -22,7 +22,7 @@ class hacklogra_upyun
 	const opt_space   = 'hacklogra_remote_filesize';
 	//new option name
 	const opt_primary = 'hacklogra_upyun_options';
-	const version     = '1.4.2-upyun-ported-from-1.2.6-origin';
+	const version     = '1.4.4-upyun-ported-from-1.2.6-origin';
 	private static $img_ext          = array('jpg', 'jpeg', 'png', 'gif', 'bmp');
 	private static $rest_user        = 'admin';
 	private static $rest_pwd         = '4d4173594c77453d';
@@ -62,6 +62,7 @@ class hacklogra_upyun
 		add_filter('wp_get_attachment_url', array(__CLASS__, 'replace_baseurl'), -999);
 		add_action('wp_ajax_hacklogra_upyun_signature', array(__CLASS__, 'return_signature'));
 		add_action('media_buttons', array(__CLASS__, 'add_media_button'), 11);
+		add_action('plugin_action_links_' . plugin_basename(HACKLOG_RA_UPYUN_LOADER), array(__CLASS__,'add_plugin_actions'));
         empty(self::$anti_leech_token) || add_filter('the_content',array(__CLASS__,'sign_post_url'));
 	}
 
@@ -1359,6 +1360,17 @@ if ( $id )
 			</p>
 		</div>
 		<?php
+	}
+	
+	/**
+	 * Add "Check update" action on installed plugin list
+	 * @param type $links
+	 * @return array
+	 */
+	public static function add_plugin_actions($links)
+	{
+		array_unshift($links, '<a target="_blank" href="http://ihacklog.com/?p=5204">' . __('Check Update',self::textdomain) . '</a>');
+		return $links;
 	}
 
 }

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Hacklog Remote Attachment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-12 20:20+0800\n"
-"PO-Revision-Date: 2012-07-12 20:25+0800\n"
+"POT-Creation-Date: 2012-07-12 20:54+0800\n"
+"PO-Revision-Date: 2012-07-12 20:54+0800\n"
 "Last-Translator: 荒野无灯 <admin@ihacklog.com>\n"
 "Language-Team: 荒野无灯 <admin@ihacklog.com>\n"
 "MIME-Version: 1.0\n"
@@ -51,286 +51,290 @@ msgstr ""
 msgid "via UpYun Form API"
 msgstr "通过又拍云表单API功能上传"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:222
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:872
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:223
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:873
 msgid "upload file to remote server failed!"
 msgstr "上传文件到远程服务器失败！"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:330
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:331
 msgid "Upyun internal Error!"
 msgstr ""
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:403
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:404
 msgid "Upload local file to Upyun server"
 msgstr "上传文件到又拍云服务器"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:406
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:407
 msgid "Hacklog Remote Attachment Upyun"
 msgstr "Hacklog又拍云远程附件"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:443
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:444
 msgid "Add media files from your computer"
 msgstr ""
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:445
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:446
 msgid "I advise you to upload images via click WordPress original add media button."
 msgstr "如果你要上传图片，我建议你使用左边的“添加媒体”按钮来上传。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:447
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:448
 msgid "This page was designed for uploading big files to UpYun Server."
 msgstr "这个页面主要设计用于上传大文件到又拍云服务器。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:479
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:480
 msgid "Save all changes"
 msgstr ""
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:758
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:759
 #, php-format
 msgid "Click <a href=\"%s\">here</a> to setup the plugin options."
 msgstr "点击 <a href=\"%s\">这里</a> 进行插件选项的设定."
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:845
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:846
 msgid "failed to make dir on remote server!Please check your permissions."
 msgstr "在远程服务器创建目录失败！请检查API接口用户权限。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1055
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1056
 msgid "Explanation of some Options"
 msgstr "选项解释"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1056
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1057
 msgid "<strong>Remote base URL</strong> is the URL to your bucket root path."
 msgstr " <strong>远程基本URL</strong> 即到你的REST API服务器bucket根目录的URL"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1057
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1058
 msgid "<strong>rest Remote path</strong> is the relative path to your bucket main directory.Use \"<strong>.</strong>\" for bucket main(root) directory.You can use sub-directory Like <strong>wp-files</strong>"
 msgstr "<strong>REST远程路径</strong> 即你用来保存附件的目录，相对于你的REST API bucket主目录，结尾不要带/，“.”表示bucket主目录"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1058
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1059
 msgid "<strong>HTTP Remote path</strong> is the relative path to your HTTP main directory.Use \"<strong>.</strong>\" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>"
 msgstr "<strong>HTTP远程路径</strong> 即到你的HTTP主目录的相对路径，结尾不要带/，“.”表示HTTP服务器主目录。又拍云一般填写与<strong>REST远程路径</strong> 相同的内容即可。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1059
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1060
 msgid "For more information:"
 msgstr "更多帮助信息："
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1059
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1060
 msgid "Please visit the <a href=\"http://ihacklog.com/?p=5204\" target=\"_blank\">Plugin Home Page</a> and <a href=\"http://ihacklog.com/?p=5001\" target=\"_blank\">Hacklog Remote Attachment</a> home page."
 msgstr "请访问 <a href=\"http://ihacklog.com/?p=5204\" target=\"_blank\">插件主页</a> 和 <a href=\"http://ihacklog.com/?p=5001\" target=\"_blank\">Hacklog Remote Attachment</a> 主页。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1061
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1062
 #, php-format
 msgid "%s Help"
 msgstr "%s 帮助"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1079
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1167
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1080
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1168
 msgid "Hacklog Remote Attachment Upyun Options"
 msgstr "Hacklog 又拍云远程附件选项"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1079
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1080
 msgid "Remote Attachment Upyun"
 msgstr "Hacklog 又拍云远程附件"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1111
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1112
 msgid "Options updated."
 msgstr "选项已经更新。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1115
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1116
 msgid "Nothing changed."
 msgstr "没有任何改变。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1128
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1129
 msgid "Connected and Authenticated successfully."
 msgstr "测试连接且认证成功。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1156
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1157
 msgid "posts has been updated."
 msgstr "篇日志内容已经被更新。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1157
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1158
 msgid "The following SQL statement was executeed:"
 msgstr "以下SQL语句被成功执行："
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1161
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1162
 msgid "no posts been updated."
 msgstr "没有日志被更新。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1176
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1177
 msgid "REST API server"
 msgstr "REST API 服务器"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1180
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1181
 #, php-format
 msgid "the IP or domain name of remote file server.Available values are: <strong>%s</strong>"
 msgstr "远程服务器的IP或域名。可用的值为：<strong>%s</strong>"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1184
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1185
 msgid "REST API server port"
 msgstr "REST API服务器端口，目前填写80即可"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1188
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1189
 msgid "the listenning port of remote rest server.Generally it is 80."
 msgstr "远程API服务器的监听端口.通常是80"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1193
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1194
 msgid "bucketname"
 msgstr "空间名称"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1197
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1198
 msgid "the bucketname you want to store your files to."
 msgstr "你用于存储文件的空间名称。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1202
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1203
 msgid "REST API username"
 msgstr "操作员用户名"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1206
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1207
 msgid "the REST API username."
 msgstr "又拍云存储上的操作员用户名。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1211
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1212
 msgid "REST API password"
 msgstr "操作员用户密码"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1215
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1216
 msgid "the API user 's password.will not be displayed here since filled and updated."
 msgstr "操作员密码。更新之后这里不会显示。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1220
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1221
 msgid "form api secret"
 msgstr "表单API密钥"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1224
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1225
 msgid "the form API secret.Be aware that if you want to use the <strong>form API features</strong>,you MUST enable this in your Upyun dashboard."
 msgstr "表单API密钥。(没有开表单API功能的不用设置)如果你要使用<strong>表单API功能</strong>上传文件,注意在又拍云空间管理中启用此功能。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1228
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1229
 msgid "form API timeout(s)"
 msgstr "表单API授权超时"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1232
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1233
 msgid "form API authorization timeout.the max authorized time (calculated in seconds) when upload file via form API.It depends on your computer's network condition."
 msgstr "表单API授权超时，即通过表单API功能上传时的授权时长限制。这取决于你的计算机所在的网络环境。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1237
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1238
 msgid "form API content max length(MiB)"
 msgstr "表单API内容最大长度（MiB)"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1241
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1242
 #, php-format
 msgid "the max file size (calculated in MiB) when upload file via form API.Currently,Upyun 's limitation is %d MiB"
 msgstr "通过表单API上传时最大允许上传的文件大小（以M计算)。目前又拍云的限制是 %d MiB."
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1246
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1247
 msgid "form API allowd ext"
 msgstr "表单API允许文件后缀"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1250
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1251
 msgid "form API allowed file extension.For example: <strong>jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z</strong>"
 msgstr "通过表单API上传时允许的文件后缀，如 <strong>jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z</strong>"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1256
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1257
 msgid "anti leech token key"
 msgstr "防盗链TOKEN密钥"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1260
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1261
 msgid "the anti leech token key your set in upyun panel"
 msgstr "你在又拍云\"空间设置\"里面设定的防盗链密钥"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1264
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1265
 msgid "anti leech timeout(s)"
 msgstr "防盗链超时(s)"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1268
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1269
 msgid "anti leech timeout"
 msgstr "防盗链超时(没有开启防盗链的不用设置)。即从网页开始显示到链接超时的时间间隔。超时以后，链接便会失效。如果是比较大的文件，如音乐、电影等，你必须考虑用户播放此文件或下载此文件需要多长时间，超时以后链接将会自动失效。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1274
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1275
 msgid "rest timeout(s)"
 msgstr "REST连接超时(s)"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1278
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1279
 msgid "rest connection timeout."
 msgstr "RESET API连接超时设置"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1283
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1284
 msgid "Remote base URL"
 msgstr "远程基本URL"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1288
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1289
 msgid "Remote base URL,the URL to your bucket root path.for example: <strong>http://xxx.b0.upaiyun.com</strong>."
 msgstr "远程基本URL，即到你的bucket根目录的URL，结尾不要带<strong>/</strong>。如： <strong>http://xxx.b0.upaiyun.com</strong>"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1292
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1293
 msgid "rest Remote path"
 msgstr "REST空间远程路径"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1296
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1297
 msgid "the relative path to your bucket main directory.Use \"<strong>.</strong>\" for rest main(root) directory.You can use sub-directory Like <strong>wp-files</strong>"
 msgstr "<strong>REST远程路径</strong>即你用来保存附件的目录，相对于你的bucket主目录，结尾不要带/，“.”表示bucket主目录"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1300
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1301
 msgid "HTTP Remote path"
 msgstr "HTTP远程路径"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1304
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1305
 msgid "the relative path to your HTTP main directory.Use \"<strong>.</strong>\" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>"
 msgstr "<strong>HTTP远程路径</strong>，到你的HTTP主目录的相对路径，结尾不要带/，“.”表示HTTP服务器主目录"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1310
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1311
 msgid "Save Options"
 msgstr "保存选项"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1316
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1317
 msgid "Hacklog Remote Attachment UpYun Status"
 msgstr "Hacklog 又拍云远程附件状态"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1319
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1320
 msgid "Space used on remote server:"
 msgstr "远程服务器上的附件已用空间："
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1333
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1334
 msgid "Authentication failed OR Failed to connect to remote server!"
 msgstr "认证失败或无法连接远程服务器！"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1341
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1342
 msgid "warning:"
 msgstr "敬告："
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1342
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1343
 msgid "if you haven't moved all your attachments OR dont't know what below means,please <strong>DO NOT</strong> click the link below!"
 msgstr "如果你没有移动附件或你不清楚下面说的是什么意思，请<strong>不要</strong> 点击下面的链接！"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1345
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1346
 msgid "Move"
 msgstr ""
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1348
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1349
 msgid "if you have moved all your attachments to the remote server,then you can click"
 msgstr "如果你已经把所有的附件移动到了远程服务器上，你可以点击"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1349
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1357
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1350
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1358
 msgid "Are your sure to do this?Make sure you have backuped your database tables."
 msgstr "你确定要这样做吗？请确保在执行此操作前已经备份好了你的数据库。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1350
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1358
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1351
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1359
 msgid "here"
 msgstr "这里"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1350
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1358
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1351
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1359
 msgid " to update the database."
 msgstr "来更新数据库。"
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1353
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1354
 msgid "Recovery"
 msgstr ""
 
-#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1356
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1357
 msgid "if you have moved all your attachments from the remote server to local server,then you can click"
 msgstr "如果你已经把所有附件从远程服务器转移到了本地服务器，请点击"
+
+#: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/hacklogra_upyun.class.php:1372
+msgid "Check Update"
+msgstr "检查更新"
 
 #: D:\htdocs\wordpress\wp-content\plugins\hacklog-remote-attachment-upyun/includes/upyun.class.php:84
 msgid "api_domain is required"
