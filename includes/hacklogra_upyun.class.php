@@ -62,7 +62,7 @@ class hacklogra_upyun
 		add_filter('wp_get_attachment_url', array(__CLASS__, 'replace_baseurl'), -999);
 		add_action('wp_ajax_hacklogra_upyun_signature', array(__CLASS__, 'return_signature'));
 		add_action('media_buttons', array(__CLASS__, 'add_media_button'), 11);
-        add_filter('the_content',array(__CLASS__,'sign_post_url'));
+        empty(self::$anti_leech_token) || add_filter('the_content',array(__CLASS__,'sign_post_url'));
 	}
 
 ############################## PRIVATE FUNCTIONS ##############################################

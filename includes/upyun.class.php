@@ -280,7 +280,7 @@ class UpYun {
     public function set_anti_leech_token_sign_cookie($uri='/',$cookie_path='/',$cookie_domain='')
     {
         $uri = ltrim($uri,'/');
-        setcookie( self::TOKEN_NAME ,$this->get_anti_leech_token_sign($uri),time() + $this->anti_leech_timeout ,'/');
+        setcookie( self::TOKEN_NAME ,$this->get_anti_leech_token_sign($uri),time() + $this->anti_leech_timeout ,$cookie_path,$cookie_domain);
     }
 
 	/**
