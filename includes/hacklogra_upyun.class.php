@@ -1154,6 +1154,7 @@ if ( $id )
 			if (($num_rows = $wpdb->query($sql)) > 0)
 			{
 				$msg = sprintf('%d ' . __('posts has been updated.', self::textdomain), $num_rows);
+				$msg .= sprintf('%1$s <blockquote><code>%2$s</code></blockquote> ', __('The following SQL statement was executeed:', self::textdomain), $sql);
 			}
 			else
 			{
