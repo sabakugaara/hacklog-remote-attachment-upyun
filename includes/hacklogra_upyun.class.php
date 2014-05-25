@@ -385,7 +385,7 @@ public static function return_signature()
 	$unique_filename = self::unique_filename(self::$rest_remote_path . self::$subdir, $filename);
 	$policy = self::$fs->build_policy(
 		array('path'=> '/'. self::$rest_remote_path . self::$subdir. '/'. $unique_filename,
-			'return_url' => WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php?post_id='.$post_id,
+			'return_url' => plugins_url('upload.php?post_id='.$post_id, HACKLOG_RA_UPYUN_LOADER),
 			)  );
 	$signature = self::$fs->get_form_api_signature($policy );
 	header("Content-Type: text/json;Charset=UTF-8");
@@ -395,7 +395,7 @@ public static function return_signature()
 	public static function add_media_button($editor_id = 'content')
 	{
 		global $post_ID;
-		$url = WP_PLUGIN_URL . "/hacklog-remote-attachment-upyun/upload.php?post_id={$post_ID}&TB_iframe=1&width=640&height=451&tab=upyun";
+		$url = plugins_url("upload.php?post_id={$post_ID}&TB_iframe=1&width=640&height=451&tab=upyun", HACKLOG_RA_UPYUN_LOADER);
 		$admin_icon = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/images/upyun_icon.png';
 		if (is_ssl())
 		{
@@ -421,7 +421,7 @@ public static function media_upload_type_form_upyun($type = 'file', $errors = nu
 	$upyun_form_action_url = 'http://' . self::$fs->get_api_domain(). '/'. self::$fs->get_bucketname() .'/';
 	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) && isset($_GET['sign']) )
 	{
-		$form_action_url = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/upload.php?post_id=' . $post_id .'&TB_iframe=1&width=640&height=451';
+		$form_action_url = plugins_url('upload.php?post_id=' . $post_id .'&TB_iframe=1&width=640&height=451', HACKLOG_RA_UPYUN_LOADER);
 	}
 	else
 	{

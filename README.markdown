@@ -8,8 +8,8 @@
 * Donate link: http://ihacklog.com/donate
 * Tags: attachment,manager,admin,images,thumbnail,ftp,remote
 * Requires at least: 3.3
-* Tested up to: 3.4.1
-* Stable tag: 1.4.4
+* Tested up to: 3.9.1
+* Stable tag: 1.4.5
 
 ------------------------------------------------------------
 
@@ -50,6 +50,7 @@ For MORE information,please visit the [plugin homepage](http://ihacklog.com/?p=5
 * 1.4.2 增加空间TOKEN防盗链功能支持
 * 1.4.3 修复同一地方多处调用url时重复签名的bug
 * 1.4.4 修复点击Tools区的链接时，提示“没有权限”的BUG.
+* 1.4.5 更改url生成方式，避免因插件目录名称不同而导致404错误。增加对WP 3.9.1支持。修改对WP_http的调用方式。
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
 [安装指导](http://ihacklog.com/?p=4993 "安装指导")
