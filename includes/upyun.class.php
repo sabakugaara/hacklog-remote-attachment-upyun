@@ -10,10 +10,10 @@ class UpYun {
 	const VERION        = 'ihacklog_20120328';
     const TOKEN_NAME = '_upt';
 	private $available_api_servers = array(
-			'v1.api.upyun.com',
-			'v2.api.upyun.com',
-			'v3.api.upyun.com',
-			'v0.api.upyun.com',
+			'v1.api.upyun.com' => '电信',
+			'v2.api.upyun.com' => '联通网通',
+			'v3.api.upyun.com' => '移动铁通',
+			'v0.api.upyun.com' => '自动判断',
 			);
 	private $bucketname;
 	private $username;

@@ -1103,6 +1103,7 @@ if ( $id )
 	{
 		$msg = '';
 		$error = '';
+        $upyun = new UpYun(array()) ;
 
 		//update options
 		if (isset($_POST['submit']))
@@ -1176,9 +1177,14 @@ if ( $id )
 					<tr valign="top">
 						<th scope="row"><label for="rest_server"><?php _e('REST API server', self::textdomain) ?>:</label></th>
 						<td>
-							<input name="rest_server" type="text" class="regular-text" size="100" id="rest_server"
-								   value="<?php echo self::get_opt('rest_server'); ?>"/>
-							<span class="description"><?php $upyun = new UpYun(array()) ;echo sprintf(__('the IP or domain name of remote file server.Available values are: <strong>%s</strong>', self::textdomain),implode(',', $upyun->get_available_api_servers()) ); ?></span>
+                        <select id="rest_server" name="rest_server">
+                        <?php foreach($upyun->get_available_api_servers() as $the_server => $server_desc):?>
+                        <option value="<?php echo $the_server;?>" <?php selected($the_server, self::get_opt('rest_server'), true);?>>
+                            <?php echo $server_desc;?>
+                        </option>
+                        <?php endforeach;?>
+                        </select>
+                        <span class="description"><?php echo sprintf(__('the IP or domain name of remote file server.', self::textdomain)); ?></span>
 						</td>
 					</tr>
 					<tr valign="top">
@@ -1361,7 +1367,7 @@ if ( $id )
 		</div>
 		<?php
 	}
-	
+
 	/**
 	 * Add "Check update" action on installed plugin list
 	 * @param type $links
