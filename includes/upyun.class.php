@@ -64,7 +64,7 @@ class UpYun {
 		$this->form_api_secret = $new_args['form_api_secret'];
 		$this->set_form_api_content_max_length($new_args['form_api_content_max_length']);
 		$this->form_api_allowed_ext = $new_args['form_api_allowed_ext'];
-		$this->form_api_timeout = $new_args['form_api_timeout'];
+		$this->form_api_timeout = $new_args['form_api_timeout'] > 0 ? $new_args['form_api_timeout'] : $this->form_api_timeout;
         $this->anti_leech_token = $new_args['anti_leech_token'];
         $this->anti_leech_timeout = $new_args['anti_leech_timeout'];
 		$this->set_timeout ( $new_args ['timeout'] );
@@ -132,7 +132,9 @@ class UpYun {
 	 *       	 return null;
 	 */
 	public function set_timeout($time) {
-		$this->timeout = $time;
+        if($time > 0) {
+            $this->timeout = $time;
+        }
 	}
 
 	/**

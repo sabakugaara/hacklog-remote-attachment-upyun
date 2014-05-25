@@ -6,7 +6,7 @@
  * @link http://ihacklog.com
  * @copyright Copyright (C) 2012 荒野无灯
  * @license http://www.gnu.org/licenses/
- * @description 
+ * @description
  * upload file via UpYun form API.
  */
 
@@ -14,7 +14,7 @@
 define( 'IFRAME_REQUEST' , true );
 
 /** Load WordPress Administration Bootstrap */
-$bootstrap_file = dirname(dirname(dirname(dirname(__FILE__)))). '/wp-admin/admin.php' ;
+$bootstrap_file = dirname(__FILE__). '/includes/bootstrap_compatible.php' ;
 if (file_exists( $bootstrap_file ))
 {
 	require $bootstrap_file;
@@ -47,7 +47,7 @@ if ( isset($action) && $action == 'edit' && !$ID )
 if($post_id <= 0)
 {
 	wp_die(__("You are not allowed to be here"));
-} 
+}
 else
 {
 
@@ -80,7 +80,7 @@ else
 		else
 		{
 			do_action("media_upload_$tab");
-		}	
+		}
 	}
 
 }
@@ -100,18 +100,18 @@ function hacklogra_upyun_media_upload_handler()
 	$errors = array();
 	$id = 0;
 
-	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) ) 
+	if ( isset($_GET['code']) && isset($_GET['message']) && isset($_GET['url']) && isset($_GET['time']) )
 	{
 		$id = hacklogra_upyun::handle_form_api_upload($_REQUEST['post_id'], $post_data = array() );
 		unset($_FILES);
-		if ( is_wp_error($id) ) 
+		if ( is_wp_error($id) )
 		{
 			$errors['upload_error'] = $id;
 			$id = false;
 		}
 	}
 
-	if ( !empty($_POST['insertonlybutton']) ) 
+	if ( !empty($_POST['insertonlybutton']) )
 	{
 		$src = $_POST['src'];
 		if ( !empty($src) && !strpos($src, '://') )
@@ -175,7 +175,7 @@ function hacklogra_upyun_media_upload_handler()
 }
 
 
-function hacklogra_upyun_media_upload_form( $errors = null ) 
+function hacklogra_upyun_media_upload_form( $errors = null )
 {
 	global $type, $tab, $pagenow, $is_IE, $is_opera, $is_iphone;
 
@@ -203,13 +203,16 @@ function hacklogra_upyun_media_upload_form( $errors = null )
 
 <div id="media-upload-notice">
 <?php
+	if(isset($_GET['code']) && isset($_GET['message'])) {
+		$errors['upload_notice'] = 'Upyun reply: code '. $_GET['code'] . ', message: '. $_GET['message'];
+	}
 	if (isset($errors['upload_notice']) )
 		echo $errors['upload_notice'];
 
 ?></div>
 <div id="media-upload-error" style="background-color:#FFFFE0;border-color:#E6DB55;color:#F00;">
 <?php
-	if (isset($errors['upload_error']) && is_wp_error($errors['upload_error']))	
+	if (isset($errors['upload_error']) && is_wp_error($errors['upload_error']))
 	{
 		echo $errors['upload_error']->get_error_message();
 		$location_href = plugins_url('upload.php?post_id=' . $post_id .'&TB_iframe=1&width=640&height=451', __FILE__);
