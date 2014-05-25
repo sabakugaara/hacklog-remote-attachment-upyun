@@ -396,7 +396,7 @@ public static function return_signature()
 	{
 		global $post_ID;
 		$url = plugins_url("upload.php?post_id={$post_ID}&TB_iframe=1&width=640&height=451&tab=upyun", HACKLOG_RA_UPYUN_LOADER);
-		$admin_icon = WP_PLUGIN_URL . '/hacklog-remote-attachment-upyun/images/upyun_icon.png';
+		$admin_icon = plugins_url('images/upyun_icon.png', HACKLOG_RA_UPYUN_LOADER);
 		if (is_ssl())
 		{
 			$url = str_replace('http://', 'https://', $url);
