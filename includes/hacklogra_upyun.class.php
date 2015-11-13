@@ -1122,7 +1122,7 @@ if ( $id )
 				'username'   => trim($_POST['rest_user']),
 				'password'   => !empty($_POST['rest_pwd']) ? trim($_POST['rest_pwd']) : self::decrypt(self::$rest_pwd),
 				'form_api_secret' => !empty($_POST['form_api_secret']) ? trim($_POST['form_api_secret']) : self::$form_api_secret,
-				'timeout'    => 	trim($_POST['timeoute']),
+				'timeout'    => 	trim($_POST['rest_timeout']),
 				'ssl'        => FALSE,
 			);
 			if (self::connect_remote_server($credentials))
