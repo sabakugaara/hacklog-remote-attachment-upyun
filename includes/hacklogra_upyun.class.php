@@ -310,8 +310,8 @@ class hacklogra_upyun
 			}
 		}
 		//后面不带 /
-		self::$rest_remote_path = $opts['rest_remote_path'];
-		self::$http_remote_path = $opts['http_remote_path'];
+		self::$rest_remote_path = $opts['rest_remote_path'] == '.' ? '' : $opts['rest_remote_path'];
+		self::$http_remote_path = $opts['http_remote_path'] == '.' ? '' : $opts['http_remote_path'];
 		//此baseurl与options里面的不同！
 		self::$remote_baseurl = '.' == self::$http_remote_path ? $opts['remote_baseurl'] :
 				$opts['remote_baseurl'] . '/' . self::$http_remote_path;
@@ -679,6 +679,7 @@ if ( $id )
 			default:
 				add_filter('wp_handle_upload', array(__CLASS__, 'upload_and_send'));
 				add_filter('media_send_to_editor', array(__CLASS__, 'replace_attachurl'), -999);
+				add_filter('wp_calculate_image_srcset', array(__CLASS__, 'replace_attachurl_srcset'), -999, 5);
 				add_filter('attachment_link', array(__CLASS__, 'replace_baseurl'), -999);
 				//生成缩略图后立即上传生成的文件并删除本地文件,this must after watermark generate
 				add_filter('wp_update_attachment_metadata', array(__CLASS__, 'upload_images'), 999);
@@ -716,13 +717,23 @@ if ( $id )
 			{
 				$credentials = array_merge($credentials,$args);
 			}
-			self::$fs = new UpYun($credentials);
+			self::$fs = new UpYun($credentials['bucketname'], $credentials['username'], $credentials['password'], $credentials['api_domain'], $credentials['timeout']);
 			if (!self::$fs )
 			{
 				return FALSE;
 			}
 		}
 		return true;
+	}
+
+	public static function is_file($file_path)
+	{
+		try {
+			self::$fs->getFileInfo($file_path);
+			return true;
+		} catch (Exception $e) {
+			return false;
+		}
 	}
 
 	/**
@@ -737,7 +748,8 @@ if ( $id )
 		if( self::setup_rest($args) )
 		{
 		//test for authentication
-		if ( !self::$fs->check_connection_and_authentication() )
+		$finfo = self::is_file('/');
+		if ( !$finfo )
 			return FALSE; //There was an erorr connecting to the server.
 		}
 		return TRUE;
@@ -772,6 +784,22 @@ if ( $id )
 	{
 		$html = str_replace(self::$local_url, self::$remote_url, $html);
 		return $html;
+	}
+
+	/**
+	 * @param $sources
+	 * @param $size_array
+	 * @param $image_src
+	 * @param $image_meta
+	 * @param $attachment_id
+	 * @return mixed
+	 */
+	public static function replace_attachurl_srcset($sources, $size_array, $image_src, $image_meta, $attachment_id)
+	{
+		foreach((array) $sources as $index => $source) {
+			$sources[$index]['url'] = str_replace(self::$local_url, self::$remote_url, $source['url']);
+		}
+		return $sources;
 	}
 
 	/**
@@ -828,32 +856,6 @@ if ( $id )
 		$remotefile = self::$rest_remote_path . self::$subdir . '/' . $local_basename_unique;
 		$remote_subdir = dirname($remotefile);
 		$remote_subdir = str_replace('\\', '/', $remote_subdir);
-		if (!self::$fs->is_dir($remote_subdir))
-		{
-			//make sure the dir on rest server is exists.
-			$subdir = explode('/', $remote_subdir);
-			$i = 0;
-			$dir_needs = '';
-			while (isset($subdir[$i]) && !empty($subdir[$i])) {
-				$dir_needs .= $subdir[$i] . '/';
-				!self::$fs->is_dir($dir_needs) && self::$fs->mkdir($dir_needs, 0755);
-				//disable directory browser
-				!self::$fs->is_file($dir_needs . 'index.html') && self::$fs->put_contents($dir_needs . 'index.html', 'Silence is golden.');
-				++$i;
-			}
-			if (!self::$fs->is_dir($remote_subdir))
-			{
-				$error_str = sprintf('%s:' . __('failed to make dir on remote server!Please check your permissions.', self::textdomain), self::plugin_name);
-				if (defined('XMLRPC_REQUEST'))
-				{
-					return self::xmlrpc_error($error_str);
-				}
-				else
-				{
-					return call_user_func($upload_error_handler, $file, $error_str);
-				}
-			}
-		}
 
 		$file['url'] = str_replace(self::$local_url, self::$remote_url, $file['url']);
 		//如果是图片，此处不处理，因为要与水印插件兼容的原因　
@@ -868,7 +870,7 @@ if ( $id )
 		}
 		$content = file_get_contents($localfile);
 		//        return array('error'=> $remotefile);
-		if (!self::$fs->put_contents($remotefile, $content, 0644))
+		if (!self::$fs->writeFile($remotefile, $content, true))
 		{
 			$error_str = sprintf('%s:' . __('upload file to remote server failed!', self::textdomain), self::plugin_name);
 			if (defined('XMLRPC_REQUEST'))
@@ -950,7 +952,7 @@ if ( $id )
 		$local_basename = basename($local_filepath);
 		$remotefile = self::$rest_remote_path . self::$subdir . '/' . $local_basename;
 		$file_data = file_get_contents($local_filepath);
-		if (!self::$fs->put_contents($remotefile, $file_data, 0644))
+		if (!self::$fs->writeFile($remotefile, $file_data, true))
 		{
 			return FALSE;
 		}
@@ -997,7 +999,7 @@ if ( $id )
 			$filename2 = preg_replace('|' . preg_quote($ext) . '$|', $ext2, $filename);
 
 			// check for both lower and upper case extension or image sub-sizes may be overwritten
-			while (self::$fs->is_file($dir . "/$filename") || self::$fs->is_file($dir . "/$filename2")) {
+			while (self::is_file($dir . "/$filename") || self::is_file($dir . "/$filename2")) {
 				$new_number = $number + 1;
 				$filename = str_replace("$number$ext", "$new_number$ext", $filename);
 				$filename2 = str_replace("$number$ext2", "$new_number$ext2", $filename2);
@@ -1006,7 +1008,7 @@ if ( $id )
 			return $filename2;
 		}
 
-		while (self::$fs->is_file($dir . "/$filename")) {
+		while (self::is_file($dir . "/$filename")) {
 			if ('' == "$number$ext")
 				$filename = $filename . ++$number . $ext;
 			else
@@ -1048,7 +1050,7 @@ if ( $id )
 	  add_action( 'admin_notices', 'check_current_screen' );
 	 * @return void
 	 */
-	public function add_my_contextual_help()
+	public static function add_my_contextual_help()
 	{
 		//WP_Screen id:  'settings_page_hacklog-remote-attachment/loader'
 		$identifier = md5(HACKLOG_RA_UPYUN_LOADER);
@@ -1103,7 +1105,6 @@ if ( $id )
 	{
 		$msg = '';
 		$error = '';
-        $upyun = new UpYun(array()) ;
 
 		//update options
 		if (isset($_POST['submit']))
@@ -1178,7 +1179,7 @@ if ( $id )
 						<th scope="row"><label for="rest_server"><?php _e('REST API server', self::textdomain) ?>:</label></th>
 						<td>
                         <select id="rest_server" name="rest_server">
-                        <?php foreach($upyun->get_available_api_servers() as $the_server => $server_desc):?>
+                        <?php foreach(['v0.api.upyun.com' => 'auto', 'v1.api.upyun.com' => 'telecom', 'v2.api.upyun.com' => 'unicom', 'v3.api.upyun.com' => 'other'] as $the_server => $server_desc):?>
                         <option value="<?php echo $the_server;?>" <?php selected($the_server, self::get_opt('rest_server'), true);?>>
                             <?php echo $server_desc;?>
                         </option>
@@ -1245,7 +1246,7 @@ if ( $id )
 						<td>
 							<input name="form_api_content_max_length" type="text" class="small-text" size="30" id="form_api_content_max_length"
 								   value="<?php echo self::get_opt('form_api_content_max_length'); ?>"/>
-							<span class="description"><?php echo sprintf(__('the max file size (calculated in MiB) when upload file via form API.Currently,Upyun \'s limitation is %d MiB', self::textdomain), UpYun::FORM_API_MAX_CONTENT_LENGTH/1024/1024 ); ?></span>
+							<span class="description"><?php echo sprintf(__('the max file size (calculated in MiB) when upload file via form API.Currently,Upyun \'s limitation is %d MiB', self::textdomain), 100 ); ?></span>
 						</td>
 					</tr>
 
@@ -1327,7 +1328,7 @@ if ( $id )
 		<?php
 		if(self::setup_rest() )
 		{
-			$total_size = self::$fs->get_bucket_usage();
+			$total_size = self::$fs->getBucketUsage();
 			if( get_option(self::opt_space) != $total_size )
 			{
 				update_option(self::opt_space, $total_size);
