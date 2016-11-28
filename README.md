@@ -10,16 +10,13 @@
 * Donate link: http://ihacklog.com/donate
 * Tags: attachment,manager,admin,images,thumbnail,ftp,remote
 * Requires at least: 3.3
-* Tested up to: 3.9.1
+* Tested up to: 4.6.1
 * Stable tag: 1.5.1
 
 ------------------------------------------------------------
 此插件用于为你的WP博客添加Upyun附件上传支持。
 可以与WordPress无缝结合，通过WordPress上传图片和文件到upyun, 支持大文件上传（需要开启表单 API)和防盗链功能。
 有任何问题，欢迎大家提交issue:
-
-gitcafe:
-https://gitcafe.com/ihacklog/Wordpress-plugin-for-UPYUN/tickets
 
 github:
 https://github.com/ihacklog/hacklog-remote-attachment-upyun/issues
@@ -55,6 +52,7 @@ Features: Adds remote attachments support for your WordPress blog.
 * 1.4.6 修复在高版本WP中打开插件表单API上传页面时报错的bug.修复默认表单API超时时间未设置时导致无法使用表单API上传的bug.
 * 1.5.0 编辑图片功能已经支持！
 * 1.5.1 fix #18 修复一个warning提示. (thanks to [GeorgeYan](https://github.com/ihacklog/hacklog-remote-attachment-upyun/issues/18))
+* 1.5.2 增加wp 4.6.1 支持,使用upyun 最新sdk
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
 [安装指导](http://ihacklog.com/?p=4993 "安装指导")
