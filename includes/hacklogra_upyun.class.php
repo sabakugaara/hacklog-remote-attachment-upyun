@@ -796,8 +796,15 @@ if ( $id )
 	 */
 	public static function replace_attachurl_srcset($sources, $size_array, $image_src, $image_meta, $attachment_id)
 	{
+		$local_url = self::$local_url;
+		// using the same logic as WP
+		global $wp_version;
+
+		if ( version_compare($wp_version, "4.5", '>=') && is_ssl() && 'https' !== substr( $local_url, 0, 5 ) && parse_url( $local_url, PHP_URL_HOST ) === $_SERVER['HTTP_HOST'] ) {
+			$local_url = set_url_scheme( $local_url, 'https' );
+		}
 		foreach((array) $sources as $index => $source) {
-			$sources[$index]['url'] = str_replace(self::$local_url, self::$remote_url, $source['url']);
+			$sources[$index]['url'] = str_replace($local_url, self::$remote_url, $source['url']);
 		}
 		return $sources;
 	}
