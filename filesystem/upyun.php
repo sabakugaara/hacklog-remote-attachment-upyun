@@ -102,24 +102,30 @@ class Filesystem_Upyun extends UpYun
     }
 
     public function check_form_api_internal_error() {
+        if (!isset($_GET['non-sign'])) {
+            return false;
+        }
         if( md5("{$_GET['code']}&{$_GET['message']}&{$_GET['url']}&{$_GET['time']}&") == $_GET['non-sign'] )
         {
             return true;
         }
         else
         {
-            return FALSE;
+            return false;
         }
     }
 
     public function check_form_api_return_param() {
+        if (!isset($_GET['sign'])) {
+            return false;
+        }
         if(	md5("{$_GET['code']}&{$_GET['message']}&{$_GET['url']}&{$_GET['time']}&". $this->get_form_api_secret() ) == $_GET['sign'] )
         {
             return true;
         }
         else
         {
-            return FALSE;
+            return false;
         }
     }
 
@@ -141,7 +147,7 @@ class Filesystem_Upyun extends UpYun
         );
         $args = array_merge($default,$args);
         $policydoc = array(
-            "bucket" => $this->get_bucketname(), /// 空间名
+            "bucket" => $args['bucket'], /// 空间名
             "expiration" => time() + $args['expire'], /// 该次授权过期时间
             "save-key" => $args['path'], /// 命名规则，/2011/12/随机.扩展名
             "allow-file-type" => $args['allow_file_ext'], /// 仅允许上传图片
@@ -204,9 +210,12 @@ class Filesystem_Upyun extends UpYun
     public function safe_sdk_call($func, $args) {
         try {
             $ret = call_user_func_array([$this, $func], $args);
-        } catch (Exception $e) {
+        } catch (UpYunException $e) {
             $this->errors->add($e->getCode(), $e->getMessage());
             $ret = false;
+            if ($this->debug) {
+                throw $e;
+            }
         }
         return $ret;
     }
@@ -421,5 +430,9 @@ class Filesystem_Upyun extends UpYun
 
     public function get_bucket_usage() {
         return $this->safe_sdk_call('getBucketUsage', []);
+    }
+
+    public function get_api_domain() {
+        return $this->endpoint;
     }
 }

@@ -186,7 +186,7 @@ function hacklogra_upyun_media_upload_form( $errors = null )
 	$_type = isset($type) ? $type : '';
 	$_tab = isset($tab) ? $tab : '';
 
-	$upload_size_unit = $max_upload_size = UpYun::FORM_API_MAX_CONTENT_LENGTH;
+	$upload_size_unit = $max_upload_size = Filesystem_Upyun::FORM_API_MAX_CONTENT_LENGTH;
 	$sizes = array( 'KB', 'MB', 'GB' );
 
 	for ( $u = -1; $upload_size_unit > 1024 && $u < count( $sizes ) - 1; $u++ ) {
