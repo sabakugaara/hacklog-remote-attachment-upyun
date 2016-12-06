@@ -12,7 +12,7 @@ if(!defined('ABSPATH'))
 	die('What are you doing?');
 }
 
-require dirname(__FILE__). '/upyun.class.php';
+require __DIR__ . '/filesystem/upyun.php';
 
 class hacklogra_upyun
 {
@@ -67,28 +67,6 @@ class hacklogra_upyun
 	}
 
 ############################## PRIVATE FUNCTIONS ##############################################
-
-	private static function encrypt($plain_text )
-	{
-		if( !class_exists('Crypt') )
-		{
-			require dirname(__FILE__). '/crypt.class.php';
-		}
-		$cypher = new Crypt(Crypt::CRYPT_MODE_HEXADECIMAL,Crypt::CRYPT_HASH_SHA1);
-		$cypher->Key = AUTH_KEY;
-		return $cypher->encrypt($plain_text);
-	}
-
-	private static function decrypt($encrypted )
-	{
-		if( !class_exists('Crypt') )
-		{
-			require dirname(__FILE__). '/crypt.class.php';
-		}
-		$cypher = new Crypt(Crypt::CRYPT_MODE_HEXADECIMAL,Crypt::CRYPT_HASH_SHA1);
-		$cypher->Key = AUTH_KEY;
-		return $cypher->decrypt( $encrypted );
-	}
 
 	private static function update_options()
 	{
@@ -700,40 +678,33 @@ if ( $id )
 		//if object not inited.
 		if (null == self::$fs)
 		{
-			$credentials = array(
+			$credentials = [
 					'api_domain' => self::$rest_server,
 					'timeout' => self::$rest_timeout,
 					'bucketname' => self::$bucketname,
 					'username' => self::$rest_user,
 					'password' => self::decrypt(self::$rest_pwd),//decrypt the password
-					'form_api_secret' => self::$form_api_secret,
-					'form_api_allowed_ext'=> self::$form_api_allowed_ext,
-					'form_api_content_max_length' => self::$form_api_content_max_length ,
-					'form_api_timeout' => self::$form_api_timeout ,
-                    'anti_leech_token' => self::$anti_leech_token,
-                    'anti_leech_timeout' => self::$anti_leech_timeout,
-				);
+				];
+			$form_api_params = [
+				'form_api_secret' => self::$form_api_secret,
+				'form_api_allowed_ext'=> self::$form_api_allowed_ext,
+				'form_api_content_max_length' => self::$form_api_content_max_length ,
+				'form_api_timeout' => self::$form_api_timeout ,
+				'anti_leech_token' => self::$anti_leech_token,
+				'anti_leech_timeout' => self::$anti_leech_timeout,
+			];
 			if( null != $args )
 			{
 				$credentials = array_merge($credentials,$args);
 			}
-			self::$fs = new UpYun($credentials['bucketname'], $credentials['username'], $credentials['password'], $credentials['api_domain'], $credentials['timeout']);
+			self::$fs = new Filesystem_Upyun($credentials['bucketname'], $credentials['username'], $credentials['password'], $credentials['api_domain'], $credentials['timeout']);
 			if (!self::$fs )
 			{
 				return FALSE;
 			}
+			self::$fs->set_form_api_params($form_api_params);
 		}
 		return true;
-	}
-
-	public static function is_file($file_path)
-	{
-		try {
-			self::$fs->getFileInfo($file_path);
-			return true;
-		} catch (Exception $e) {
-			return false;
-		}
 	}
 
 	/**
@@ -745,15 +716,7 @@ if ( $id )
 	public static function connect_remote_server($args = null )
 	{
 		//just call the setup and test the authentication
-		if( self::setup_rest($args) )
-		{
-		//test for authentication
-		$finfo = self::is_file('/');
-		if ( !$finfo )
-			return FALSE; //There was an erorr connecting to the server.
-		}
-		return TRUE;
-
+		return self::$fs->connect();
 	}
 
 	/**

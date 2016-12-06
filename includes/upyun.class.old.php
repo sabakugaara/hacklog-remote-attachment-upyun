@@ -4,7 +4,7 @@ if(!defined('ABSPATH'))
 	die('What are you doing?');
 }
 
-class UpYun {
+class UpYunOld {
 	//currently ,max filesize allowed by Upyuh form API is 100MiB
 	const FORM_API_MAX_CONTENT_LENGTH = 104857600;
 	const VERION        = 'ihacklog_20120328';
