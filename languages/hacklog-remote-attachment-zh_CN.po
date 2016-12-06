@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Hacklog Remote Attachment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-07 03:58+0800\n"
-"PO-Revision-Date: 2016-12-07 04:00+0800\n"
+"POT-Creation-Date: 2016-12-07 04:11+0800\n"
+"PO-Revision-Date: 2016-12-07 04:11+0800\n"
 "Last-Translator: 荒野无灯 <sh4d0walker@ihacklog.com>\n"
 "Language-Team: 荒野无灯 <admin@ihacklog.com>\n"
 "Language: zh_CN\n"
@@ -16,19 +16,19 @@ msgstr ""
 "X-Generator: Poedit 1.8.11\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: filesystem/upyun.php:84 includes/upyun.class.old.php:84
+#: filesystem/upyun.php:84
 msgid "api_domain is required"
 msgstr ""
 
-#: filesystem/upyun.php:89 includes/upyun.class.old.php:89
+#: filesystem/upyun.php:89
 msgid "bucketname is required"
 msgstr ""
 
-#: filesystem/upyun.php:94 includes/upyun.class.old.php:94
+#: filesystem/upyun.php:94
 msgid "username is required"
 msgstr ""
 
-#: filesystem/upyun.php:98 includes/upyun.class.old.php:98
+#: filesystem/upyun.php:98
 msgid "password is required"
 msgstr ""
 
@@ -102,6 +102,8 @@ msgid ""
 "directory.Use \"<strong>/</strong>\" for bucket main(root) directory.You can "
 "use sub-directory Like <strong>wp-files</strong>"
 msgstr ""
+"<strong>REST远程路径</strong> 即你用来保存附件的目录，相对于你的REST API "
+"bucket主目录，结尾不要带/，“/”表示bucket主目录"
 
 #: includes/hacklogra_upyun.class.php:974
 msgid ""
@@ -109,6 +111,9 @@ msgid ""
 "directory.Use \"<strong>/</strong>\" for HTTP main(root) directory.You can "
 "use sub-directory Like <strong>wp-files</strong>"
 msgstr ""
+"<strong>HTTP远程路径</strong> 即到你的HTTP主目录的相对路径，结尾不要"
+"带/，“/”表示HTTP服务器主目录。又拍云一般填写与<strong>REST远程路径</strong> "
+"相同的内容即可。"
 
 #: includes/hacklogra_upyun.class.php:975
 msgid "For more information:"
@@ -116,13 +121,11 @@ msgstr "更多帮助信息："
 
 #: includes/hacklogra_upyun.class.php:975
 msgid ""
-"Please visit the <a href=\"http://ihacklog.com/?p=5204\" target=\"_blank"
-"\">Plugin Home Page</a> and <a href=\"http://ihacklog.com/?p=5001\" target="
-"\"_blank\">Hacklog Remote Attachment</a> home page."
+"Please visit the <a href=\"https://github.com/ihacklog/hacklog-remote-"
+"attachment-upyun\" target=\"_blank\">Plugin Home Page</a> and <a href="
+"\"http://80x86.io/post/hacklog-remote-attachment.html\" target=\"_blank"
+"\">Hacklog Remote Attachment</a> home page."
 msgstr ""
-"请访问 <a href=\"http://ihacklog.com/?p=5204\" target=\"_blank\">插件主页</"
-"a> 和 <a href=\"http://ihacklog.com/?p=5001\" target=\"_blank\">Hacklog "
-"Remote Attachment</a> 主页。"
 
 #: includes/hacklogra_upyun.class.php:977
 #, php-format
@@ -388,22 +391,6 @@ msgstr "如果你已经把所有附件从远程服务器转移到了本地服务
 msgid "Check Update"
 msgstr "检查更新"
 
-#: includes/upyun.class.old.php:103
-msgid "form API content length invalid."
-msgstr ""
-
-#: includes/upyun.class.old.php:362
-msgid "invalid http method(valid method can be: "
-msgstr ""
-
-#: includes/upyun.class.old.php:531
-msgid "Failed to connect to remote server!Could not resolve the hostname."
-msgstr "连接远程服务器失败！无法解析主机名。"
-
-#: includes/upyun.class.old.php:541
-msgid "Could not communicate with upyun server!"
-msgstr ""
-
 #: upload.php:30
 msgid "You do not have permission to upload files."
 msgstr "sorry~~您没有上传文件的权限。"
@@ -438,6 +425,18 @@ msgstr ""
 #: upload.php:254
 msgid "via UpYun Form API"
 msgstr "通过又拍云表单API功能上传"
+
+#~ msgid ""
+#~ "Please visit the <a href=\"http://ihacklog.com/?p=5204\" target=\"_blank"
+#~ "\">Plugin Home Page</a> and <a href=\"http://ihacklog.com/?p=5001\" "
+#~ "target=\"_blank\">Hacklog Remote Attachment</a> home page."
+#~ msgstr ""
+#~ "请访问 <a href=\"http://ihacklog.com/?p=5204\" target=\"_blank\">插件主页"
+#~ "</a> 和 <a href=\"http://ihacklog.com/?p=5001\" target=\"_blank\">Hacklog "
+#~ "Remote Attachment</a> 主页。"
+
+#~ msgid "Failed to connect to remote server!Could not resolve the hostname."
+#~ msgstr "连接远程服务器失败！无法解析主机名。"
 
 #~ msgid "failed to make dir on remote server!Please check your permissions."
 #~ msgstr "在远程服务器创建目录失败！请检查API接口用户权限。"

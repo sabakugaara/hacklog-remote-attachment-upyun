@@ -972,7 +972,7 @@ class hacklogra_upyun
             '<p>' . __('<strong>Remote base URL</strong> is the URL to your bucket root path.', self::textdomain) . '</p>' .
             '<p>' . __('<strong>rest Remote path</strong> is the relative path to your bucket main directory.Use "<strong>/</strong>" for bucket main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain) . '</p>' .
             '<p>' . __('<strong>HTTP Remote path</strong> is the relative path to your HTTP main directory.Use "<strong>/</strong>" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain) . '</p>' .
-            '<p><strong>' . __('For more information:', self::textdomain) . '</strong> ' . __('Please visit the <a href="http://ihacklog.com/?p=5204" target="_blank">Plugin Home Page</a> and <a href="http://ihacklog.com/?p=5001" target="_blank">Hacklog Remote Attachment</a> home page.', self::textdomain) . '</p>';
+            '<p><strong>' . __('For more information:', self::textdomain) . '</strong> ' . __('Please visit the <a href="https://github.com/ihacklog/hacklog-remote-attachment-upyun" target="_blank">Plugin Home Page</a> and <a href="http://80x86.io/post/hacklog-remote-attachment.html" target="_blank">Hacklog Remote Attachment</a> home page.', self::textdomain) . '</p>';
         $args = array(
             'title' => sprintf(__("%s Help", self::textdomain), self::plugin_name),
             'id' => $current_screen_id,
@@ -1318,7 +1318,7 @@ class hacklogra_upyun
      */
     public static function add_plugin_actions($links)
     {
-        array_unshift($links, '<a target="_blank" href="http://ihacklog.com/?p=5204">' . __('Check Update', self::textdomain) . '</a>');
+        array_unshift($links, '<a target="_blank" href="https://github.com/ihacklog/hacklog-remote-attachment-upyun">' . __('Check Update', self::textdomain) . '</a>');
         return $links;
     }
 

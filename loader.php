@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Hacklog Remote Attachment Upyun
-Plugin URI: http://ihacklog.com/?p=5204
+Plugin URI: https://github.com/ihacklog/hacklog-remote-attachment-upyun
 Description: WordPress 远程附件上传插件for Upyun(又拍云).Remote attachment support for WordPress.Support Multisite.
 Version: 1.5.2
 Author: 荒野无灯
-Author URI: http://ihacklog.com/
+Author URI: http://80x86.io/
 */
 
 /**
