@@ -20,7 +20,7 @@ class Filesystem_Upyun extends UpYun
 
     private $form_api_secret = '';
     private $anti_leech_token = '';
-    private $form_api_content_max_length = 100;
+    private $form_api_content_max_length = 104857600;
     private $form_api_allowed_ext = 'jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z';
     private $form_api_timeout = 300;
     //default anti-leech token timeout is 10 min
@@ -56,6 +56,10 @@ class Filesystem_Upyun extends UpYun
         }
         if (!empty($form_api_params['form_api_allowed_ext'])) {
             $this->form_api_allowed_ext = $form_api_params['form_api_allowed_ext'];
+        }
+        //form_api_content_max_length
+        if (!empty($form_api_params['form_api_content_max_length'])) {
+            $this->form_api_content_max_length = 1024 * 1024 * $form_api_params['form_api_content_max_length'];
         }
         if (!empty($form_api_params['form_api_timeout'])) {
             $this->form_api_timeout = $form_api_params['form_api_timeout'];

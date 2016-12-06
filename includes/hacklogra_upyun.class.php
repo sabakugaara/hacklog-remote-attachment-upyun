@@ -48,6 +48,7 @@ class hacklogra_upyun
      * @var Filesystem_Upyun
      */
     private static $fs = null;
+    private static $is_form_api_upload = false;
 
     public function __construct()
     {
@@ -282,6 +283,7 @@ class hacklogra_upyun
         if (!self::setup_rest()) {
             return new WP_Error('hacklogra_internal_error', 'failed to contruct Upyun class');
         }
+        self::$is_form_api_upload = true;
         //check_admin_referer('media-form');
         // Upload File button was clicked
         if (self::$fs->check_form_api_internal_error()) {
@@ -750,6 +752,9 @@ class hacklogra_upyun
      */
     public static function upload_and_send($file)
     {
+        if (self::$is_form_api_upload) {
+            return $file;
+        }
         /**
          * 泥马， xmlrpc mw_newMediaObject 方法中的 wp_handle_upload HOOK  file 参数仅为文件名！
          */
@@ -820,6 +825,9 @@ class hacklogra_upyun
      */
     public static function upload_images($metadata)
     {
+        if (self::$is_form_api_upload) {
+            return $metadata;
+        }
         if (!self::is_image_file($metadata['file'])) {
             return $metadata;
         }
@@ -962,8 +970,8 @@ class hacklogra_upyun
         $current_screen_id = 'settings_page_' . $identifier;
         $text = '<p><h2>' . __('Explanation of some Options', self::textdomain) . '</h2></p>' .
             '<p>' . __('<strong>Remote base URL</strong> is the URL to your bucket root path.', self::textdomain) . '</p>' .
-            '<p>' . __('<strong>rest Remote path</strong> is the relative path to your bucket main directory.Use "<strong>.</strong>" for bucket main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain) . '</p>' .
-            '<p>' . __('<strong>HTTP Remote path</strong> is the relative path to your HTTP main directory.Use "<strong>.</strong>" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain) . '</p>' .
+            '<p>' . __('<strong>rest Remote path</strong> is the relative path to your bucket main directory.Use "<strong>/</strong>" for bucket main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain) . '</p>' .
+            '<p>' . __('<strong>HTTP Remote path</strong> is the relative path to your HTTP main directory.Use "<strong>/</strong>" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain) . '</p>' .
             '<p><strong>' . __('For more information:', self::textdomain) . '</strong> ' . __('Please visit the <a href="http://ihacklog.com/?p=5204" target="_blank">Plugin Home Page</a> and <a href="http://ihacklog.com/?p=5001" target="_blank">Hacklog Remote Attachment</a> home page.', self::textdomain) . '</p>';
         $args = array(
             'title' => sprintf(__("%s Help", self::textdomain), self::plugin_name),
@@ -1231,7 +1239,7 @@ class hacklogra_upyun
                                    id="rest_remote_path"
                                    value="<?php echo self::get_opt('rest_remote_path'); ?>"/>
                             <span
-                                class="description"><?php _e('the relative path to your bucket main directory.Use "<strong>.</strong>" for rest main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain); ?></span>
+                                class="description"><?php _e('the relative path to your bucket main directory.Use "<strong>/</strong>" for rest main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain); ?></span>
                         </td>
                     </tr>
                     <tr valign="top">
@@ -1242,7 +1250,7 @@ class hacklogra_upyun
                                    id="http_remote_path"
                                    value="<?php echo self::get_opt('http_remote_path'); ?>"/>
                             <span
-                                class="description"><?php _e('the relative path to your HTTP main directory.Use "<strong>.</strong>" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain); ?></span>
+                                class="description"><?php _e('the relative path to your HTTP main directory.Use "<strong>/</strong>" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain); ?></span>
                         </td>
                     </tr>
                 </table>
@@ -1264,7 +1272,7 @@ class hacklogra_upyun
                     if (get_option(self::opt_space) != $total_size) {
                         update_option(self::opt_space, $total_size);
                     }
-                    echo self::human_size($total_size);
+                    echo '<span style="color:#4e9a06;font-size:14px;">' . self::human_size($total_size) . '</span>';
                 } else {
                     echo '<span style="color:#FF0000;">';
                     _e('Authentication failed OR Failed to connect to remote server!', self::textdomain);
@@ -1272,6 +1280,11 @@ class hacklogra_upyun
                 }
                 ?>
             </p>
+            <ul style="color:#999999;font-size:14px;">
+                <li>
+                    Upyun SDK Version: <span style="color:#4e9a06;font-size:14px;"><?php echo self::$fs->version();?></span>
+                </li>
+            </ul>
             <hr/>
             <h2>Tools</h2>
 
