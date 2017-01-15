@@ -272,10 +272,10 @@ class hacklogra_upyun
             }
         }
         //后面不带 /
-        self::$rest_remote_path = $opts['rest_remote_path'] == '.' ? '' : $opts['rest_remote_path'];
-        self::$http_remote_path = $opts['http_remote_path'] == '.' ? '' : $opts['http_remote_path'];
+        self::$rest_remote_path = $opts['rest_remote_path'] == '/' ? '' : $opts['rest_remote_path'];
+        self::$http_remote_path = $opts['http_remote_path'] == '/' ? '' : $opts['http_remote_path'];
         //此baseurl与options里面的不同！
-        self::$remote_baseurl = '.' == self::$http_remote_path ? $opts['remote_baseurl'] :
+        self::$remote_baseurl = empty(self::$http_remote_path) ? $opts['remote_baseurl'] :
             $opts['remote_baseurl'] . '/' . self::$http_remote_path;
         self::$remote_url = self::$remote_baseurl . self::$subdir;
     }
