@@ -81,11 +81,11 @@ You can visit [plugin homepage](http://ihacklog.com/?p=5001 "plugin homepage") f
 ### Screenshots
 
 
-![截图1](/ihacklog/Wordpress-plugin-for-UPYUN/raw/master/screenshot-1.png "截图1")
+![截图1](https://raw.githubusercontent.com/ihacklog/hacklog-remote-attachment-upyun/master/screenshot-1.png "截图1")
 
 
 
-![截图2](/ihacklog/Wordpress-plugin-for-UPYUN/raw/master/screenshot-2.png "截图2")
+![截图2](https://raw.githubusercontent.com/ihacklog/hacklog-remote-attachment-upyun/master/screenshot-2.png "截图2")
 
 
 
