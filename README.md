@@ -56,6 +56,7 @@ Features: Adds remote attachments support for your WordPress blog.
 * 1.5.3 修复使用form api时一个php警告(form api上传时不应用重复应用本插件的非form api hook). 
         优化代码和修复若干bug. 移除无用的crypt类.此次更新，需要重新填写一次密码.
 * 1.5.4 修复插件配置页空值不能保存的bug. 给大部分参数增加默认值
+* 1.5.5 修复url中重复的/
 
 更多信息请访问[插件主页](http://ihacklog.com/?p=5001 "plugin homepage") 获取关于插件的更多信息，使用技巧等.
 [安装指导](http://ihacklog.com/?p=4993 "安装指导")
