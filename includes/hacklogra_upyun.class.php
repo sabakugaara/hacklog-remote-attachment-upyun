@@ -78,13 +78,15 @@ class hacklogra_upyun
         $value = self::get_default_opts();
         $keys = array_keys($value);
         foreach ($keys as $key) {
-            if (!empty($_POST[$key])) {
+            if (isset($_POST[$key])) {
                 $value[$key] = addslashes(trim($_POST[$key]));
             }
         }
         $value['remote_baseurl'] = rtrim($value['remote_baseurl'], '/');
         $value['rest_remote_path'] = rtrim($value['rest_remote_path'], '/');
+        $value['rest_remote_path'] = empty($value['rest_remote_path']) ? '/' : $value['rest_remote_path'];
         $value['http_remote_path'] = rtrim($value['http_remote_path'], '/');
+        $value['http_remote_path'] = empty($value['http_remote_path']) ? '/' : $value['http_remote_path'];
         if (update_option(self::opt_primary, $value))
             return TRUE;
         else
@@ -1083,7 +1085,7 @@ class hacklogra_upyun
                             <select id="rest_server" name="rest_server">
                                 <?php foreach (['v0.api.upyun.com' => 'auto', 'v1.api.upyun.com' => 'telecom', 'v2.api.upyun.com' => 'unicom', 'v3.api.upyun.com' => 'other'] as $the_server => $server_desc): ?>
                                     <option
-                                        value="<?php echo $the_server; ?>" <?php selected($the_server, self::get_opt('rest_server'), true); ?>>
+                                        value="<?php echo $the_server; ?>" <?php selected($the_server, self::get_opt('rest_server', 'v0.api.upyun.com'), true); ?>>
                                         <?php echo $server_desc; ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -1097,7 +1099,7 @@ class hacklogra_upyun
                                 :</label></th>
                         <td>
                             <input name="rest_port" type="text" class="small-text" size="60" id="rest_port"
-                                   value="<?php echo self::get_opt('rest_port'); ?>"/>
+                                   value="<?php echo self::get_opt('rest_port', 80); ?>"/>
                             <span
                                 class="description"><?php _e('the listenning port of remote rest server.Generally it is 80.', self::textdomain) ?></span>
                         </td>
@@ -1129,7 +1131,7 @@ class hacklogra_upyun
                                 :</label></th>
                         <td>
                             <input name="rest_pwd" type="password" class="regular-text" size="60" id="rest_pwd"
-                                   value=""/>
+                                   value="<?php echo self::get_opt('rest_pwd'); ?>"/>
                             <span
                                 class="description"><?php _e('the API user \'s password.will not be displayed here since filled and updated.', self::textdomain) ?></span>
                         </td>
@@ -1153,7 +1155,7 @@ class hacklogra_upyun
                         <td>
                             <input name="form_api_timeout" type="text" class="small-text" size="30"
                                    id="form_api_timeout"
-                                   value="<?php echo self::get_opt('form_api_timeout'); ?>"/>
+                                   value="<?php echo self::get_opt('form_api_timeout', 300); ?>"/>
                             <span
                                 class="description"><?php _e('form API authorization timeout.the max authorized time (calculated in seconds) when upload file via form API.It depends on your computer\'s network condition.', self::textdomain); ?></span>
                         </td>
@@ -1166,7 +1168,7 @@ class hacklogra_upyun
                         <td>
                             <input name="form_api_content_max_length" type="text" class="small-text" size="30"
                                    id="form_api_content_max_length"
-                                   value="<?php echo self::get_opt('form_api_content_max_length'); ?>"/>
+                                   value="<?php echo self::get_opt('form_api_content_max_length', 100); ?>"/>
                             <span
                                 class="description"><?php echo sprintf(__('the max file size (calculated in MiB) when upload file via form API.Currently,Upyun \'s limitation is %d MiB', self::textdomain), 100); ?></span>
                         </td>
@@ -1179,7 +1181,7 @@ class hacklogra_upyun
                         <td>
                             <input name="form_api_allowed_ext" type="text" class="regular-text" size="30"
                                    id="form_api_allowed_ext"
-                                   value="<?php echo self::get_opt('form_api_allowed_ext'); ?>"/>
+                                   value="<?php echo self::get_opt('form_api_allowed_ext', 'jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z'); ?>"/>
                             <span
                                 class="description"><?php _e('form API allowed file extension.For example: <strong>jpg,jpeg,gif,png,doc,pdf,zip,rar,tar.gz,tar.bz2,7z</strong>', self::textdomain); ?></span>
                         </td>
@@ -1191,7 +1193,7 @@ class hacklogra_upyun
                                 for="anti_leech_token"><?php _e('anti leech token key', self::textdomain) ?>:</label>
                         </th>
                         <td>
-                            <input name="anti_leech_token" type="text" class="regular-text" size="60"
+                            <input name="anti_leech_token" type="password" class="regular-text" size="60"
                                    id="anti_leech_token"
                                    value="<?php echo self::get_opt('anti_leech_token'); ?>"/>
                             <span
@@ -1205,7 +1207,7 @@ class hacklogra_upyun
                         <td>
                             <input name="anti_leech_timeout" type="text" class="small-text" size="30"
                                    id="anti_leech_timeout"
-                                   value="<?php echo self::get_opt('anti_leech_timeout'); ?>"/>
+                                   value="<?php echo self::get_opt('anti_leech_timeout', 600); ?>"/>
                             <span class="description"><?php _e('anti leech timeout', self::textdomain); ?></span>
                         </td>
                     </tr>
@@ -1216,7 +1218,7 @@ class hacklogra_upyun
                                 :</label></th>
                         <td>
                             <input name="rest_timeout" type="text" class="small-text" size="30" id="rest_timeout"
-                                   value="<?php echo self::get_opt('rest_timeout'); ?>"/>
+                                   value="<?php echo self::get_opt('rest_timeout', 30); ?>"/>
                             <span class="description"><?php _e('rest connection timeout.', self::textdomain); ?></span>
                         </td>
                     </tr>
@@ -1237,7 +1239,7 @@ class hacklogra_upyun
                         <td>
                             <input name="rest_remote_path" type="text" class="regular-text" size="60"
                                    id="rest_remote_path"
-                                   value="<?php echo self::get_opt('rest_remote_path'); ?>"/>
+                                   value="<?php echo self::get_opt('rest_remote_path', '/'); ?>"/>
                             <span
                                 class="description"><?php _e('the relative path to your bucket main directory.Use "<strong>/</strong>" for rest main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain); ?></span>
                         </td>
@@ -1248,7 +1250,7 @@ class hacklogra_upyun
                         <td>
                             <input name="http_remote_path" type="text" class="regular-text" size="60"
                                    id="http_remote_path"
-                                   value="<?php echo self::get_opt('http_remote_path'); ?>"/>
+                                   value="<?php echo self::get_opt('http_remote_path', '/'); ?>"/>
                             <span
                                 class="description"><?php _e('the relative path to your HTTP main directory.Use "<strong>/</strong>" for HTTP main(root) directory.You can use sub-directory Like <strong>wp-files</strong>', self::textdomain); ?></span>
                         </td>
