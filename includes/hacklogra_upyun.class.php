@@ -343,7 +343,7 @@ class hacklogra_upyun {
 		$policy          = self::$fs->build_policy(
 			array(
 				'path'       => '/' . self::$rest_remote_path . self::$subdir . '/' . $unique_filename,
-				'return_url' => admin_url( 'media-upload.php?tab=type_upyun&post_id=' . $post_id, HACKLOG_RA_UPYUN_LOADER ),
+				'return_url' => admin_url( 'media-upload.php?chromeless=1&tab=type_upyun&post_id=' . $post_id, HACKLOG_RA_UPYUN_LOADER ),
 				'bucket'     => self::$bucketname,
 			) );
 		$signature       = self::$fs->get_form_api_signature( $policy );
@@ -353,7 +353,7 @@ class hacklogra_upyun {
 
 	public static function add_media_button( $editor_id = 'content' ) {
 		global $post_ID;
-		$url        = plugins_url( "upload.php?post_id={$post_ID}&TB_iframe=1&width=640&height=451&tab=upyun", HACKLOG_RA_UPYUN_LOADER );
+		$url        = admin_url( "media-upload.php?chromeless=1&tab=type_upyun&upload.php?post_id={$post_ID}", HACKLOG_RA_UPYUN_LOADER );
 		$admin_icon = plugins_url( 'images/upyun_icon.png', HACKLOG_RA_UPYUN_LOADER );
 		if ( is_ssl() ) {
 			$url = str_replace( 'http://', 'https://', $url );
@@ -451,7 +451,7 @@ class hacklogra_upyun {
 
 		$upyun_form_action_url = 'http://' . self::$fs->get_api_domain() . '/' . self::$bucketname . '/';
 		if ( isset( $_GET['code'] ) && isset( $_GET['message'] ) && isset( $_GET['url'] ) && isset( $_GET['time'] ) && isset( $_GET['sign'] ) ) {
-			$form_action_url = plugins_url( 'upload.php?post_id=' . $post_id . '&TB_iframe=1&width=640&height=451', HACKLOG_RA_UPYUN_LOADER );
+			$form_action_url = admin_url( 'media-upload.php?chromeless=1&tab=type_upyun&post_id=' . $post_id . '&TB_iframe=1&width=640&height=451', HACKLOG_RA_UPYUN_LOADER );
 		} else {
 			$form_action_url = $upyun_form_action_url;
 		}
@@ -696,6 +696,9 @@ class hacklogra_upyun {
 				//JUST DO NOTHING ,SKIP.
 				break;
 			default:
+                header("Access-Control-Allow-Origin: v1.api.upyun.com");
+                header("Origin: http://v1.api.upyun.com");
+                header("Access-Control-Request-Method: GET, POST, PUT, PATCH, DELETE, OPTIONS");
 				add_filter( 'wp_handle_upload', array( __CLASS__, 'upload_and_send' ) );
 				add_filter( 'media_send_to_editor', array( __CLASS__, 'replace_attachurl' ), - 999 );
 				add_filter( 'wp_calculate_image_srcset', array( __CLASS__, 'replace_attachurl_srcset' ), - 999, 5 );
@@ -728,7 +731,7 @@ class hacklogra_upyun {
 					$policy          = self::$fs->build_policy(
 						array(
 							'path'       => '/' . self::$rest_remote_path . self::$subdir . '/' . $unique_filename,
-							'return_url' => admin_url( 'media-upload.php?tab=type_upyun&post_id=' . $post_id, HACKLOG_RA_UPYUN_LOADER ),
+							'return_url' => admin_url( 'media-upload.php?chromeless=1&tab=type_upyun&post_id=' . $post_id, HACKLOG_RA_UPYUN_LOADER ),
 							'bucket'     => self::$bucketname,
 						) );
 					$signature       = self::$fs->get_form_api_signature( $policy );
