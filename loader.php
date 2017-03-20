@@ -18,7 +18,7 @@ Author URI: http://80x86.io/
  */
 
 /*
- Copyright 2012  荒野无灯
+ Copyright 2017  荒野无灯
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -34,21 +34,20 @@ Author URI: http://80x86.io/
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-if (! defined ( 'ABSPATH' )) {
+if ( ! defined( 'ABSPATH' ) ) {
 	die ( 'What are you doing?' );
 }
 
 //the Hacklog Remote Attachment plugin maybe loaded after this plugin,so,we can only remind the user.
-function check_hacklog_ra_upyun_compability()
-{
-if (class_exists ( 'hacklogra' ))
-{
-	add_action ( 'admin_notices', create_function ( '', 'echo "<div class=\"error\"><p>Error: you have already activated <strong>Hacklog Remote Attachment</strong>,Please deactivate it and then activate this plugin(<strong>Hacklog Remote Attachment Upyun</strong>).</p></div>";' ) );
+function hacklog_ra_upyun_check_compability() {
+	if ( class_exists( 'hacklogra' ) ) {
+		add_action( 'admin_notices', create_function( '', 'echo "<div class=\"error\"><p>Error: you have already activated <strong>Hacklog Remote Attachment</strong>,Please deactivate it and then activate this plugin(<strong>Hacklog Remote Attachment Upyun</strong>).</p></div>";' ) );
+	}
 }
-}
-add_action('admin_init','check_hacklog_ra_upyun_compability');
+
+add_action( 'admin_init', 'hacklog_ra_upyun_check_compability' );
 
 
-define ( 'HACKLOG_RA_UPYUN_LOADER', __FILE__ );
-require plugin_dir_path ( __FILE__ ) . '/includes/hacklogra_upyun.class.php';
+define( 'HACKLOG_RA_UPYUN_LOADER', __FILE__ );
+require plugin_dir_path( __FILE__ ) . '/includes/hacklogra_upyun.class.php';
 new hacklogra_upyun ();
