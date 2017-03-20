@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require __DIR__ . '/../filesystem/upyun.php';
 
+
 class hacklogra_upyun {
 	const textdomain = 'hacklog-remote-attachment';
 	const plugin_name = 'Hacklog Remote Attachment Upyun';
@@ -43,6 +44,7 @@ class hacklogra_upyun {
 	private static $local_path = '';
 	private static $local_url = '';
 	private static $local_baseurl = '';
+	private static $tab_type_is_upyun = false;
 	/**
 	 * @var Filesystem_Upyun
 	 */
@@ -62,7 +64,7 @@ class hacklogra_upyun {
 		//frontend filter,filter on image only
 		add_filter( 'wp_get_attachment_url', array( __CLASS__, 'replace_baseurl' ), - 999 );
 		add_action( 'wp_ajax_hacklogra_upyun_signature', array( __CLASS__, 'return_signature' ) );
-		add_action( 'media_buttons', array( __CLASS__, 'add_media_button' ), 11 );
+//		add_action( 'media_buttons', array( __CLASS__, 'add_media_button' ), 11 );
 		add_action( 'plugin_action_links_' . plugin_basename( HACKLOG_RA_UPYUN_LOADER ), array(
 			__CLASS__,
 			'add_plugin_actions'
@@ -336,12 +338,12 @@ class hacklogra_upyun {
 			die( json_encode( array( 'error' => 'yes', 'message' => 'failed to contruct Upyun class' ) ) );
 		}
 		$post_id         = $_POST['post_id'];
-		$filename        = basename( $_POST['file'] );
+		$filename        = sanitize_file_name(basename( $_POST['file'] ));
 		$unique_filename = self::unique_filename( self::$rest_remote_path . self::$subdir, $filename );
 		$policy          = self::$fs->build_policy(
 			array(
 				'path'       => '/' . self::$rest_remote_path . self::$subdir . '/' . $unique_filename,
-				'return_url' => plugins_url( 'upload.php?post_id=' . $post_id, HACKLOG_RA_UPYUN_LOADER ),
+				'return_url' => admin_url( 'media-upload.php?tab=type_upyun&post_id=' . $post_id, HACKLOG_RA_UPYUN_LOADER ),
 				'bucket'     => self::$bucketname,
 			) );
 		$signature       = self::$fs->get_form_api_signature( $policy );
@@ -360,6 +362,82 @@ class hacklogra_upyun {
 		$img = '<img src="' . esc_url( $admin_icon ) . '" width="15" height="15" alt="' . esc_attr( $alt ) . '" />';
 
 		echo '<a href="' . esc_url( $url ) . '" class="thickbox hacklogra-upyun-button" id="' . esc_attr( $editor_id ) . '-hacklogra-upyun" title="' . esc_attr__( 'Hacklog Remote Attachment Upyun', self::textdomain ) . '" onclick="return false;">' . $img . '</a>';
+	}
+
+
+	public static function hacklogra_upyun_media_upload_form( $errors = null ) {
+		global $type, $tab, $pagenow, $is_IE, $is_opera, $is_iphone;
+
+		if ( $is_iphone ) {
+			return;
+		}
+
+		$post_id = isset( $_REQUEST['post_id'] ) ? intval( $_REQUEST['post_id'] ) : 0;
+		$_type   = isset( $type ) ? $type : '';
+		$_tab    = isset( $tab ) ? $tab : '';
+
+		$upload_size_unit = $max_upload_size = Filesystem_Upyun::FORM_API_MAX_CONTENT_LENGTH;
+		$sizes            = array( 'KB', 'MB', 'GB' );
+
+		for ( $u = - 1; $upload_size_unit > 1024 && $u < count( $sizes ) - 1; $u ++ ) {
+			$upload_size_unit /= 1024;
+		}
+
+		if ( $u < 0 ) {
+			$upload_size_unit = 0;
+			$u                = 0;
+		} else {
+			$upload_size_unit = (int) $upload_size_unit;
+		}
+		?>
+
+        <div id="media-upload-notice">
+			<?php
+			if ( isset( $_GET['code'] ) && isset( $_GET['message'] ) ) {
+				$errors['upload_notice'] = 'Upyun reply: code ' . $_GET['code'] . ', message: ' . $_GET['message'];
+			}
+			if ( isset( $errors['upload_notice'] ) ) {
+				echo $errors['upload_notice'];
+			}
+
+			?></div>
+        <div id="media-upload-error" style="background-color:#FFFFE0;border-color:#E6DB55;color:#F00;">
+			<?php
+			if ( isset( $errors['upload_error'] ) && is_wp_error( $errors['upload_error'] ) ) {
+				echo $errors['upload_error']->get_error_message();
+				$location_href = plugins_url( 'upload.php?post_id=' . $post_id . '&TB_iframe=1&width=640&height=451', __FILE__ );
+				echo '<a href="#" onclick="location.href=\'' . $location_href . '\';return false;">Retry</a>';
+			}
+			?>
+        </div>
+
+
+        <div id="html-upload-ui" class="hide-if-js">
+            <p id="async-upload-wrap">
+                <label class="screen-reader-text" for="async-upload"><?php _e( 'Upload' ); ?></label>
+                <input type="file" name="file" id="async-upload"/>
+				<?php submit_button( __( 'Upload' ), 'button', 'html-upload', false ); ?>
+                <a href="#" onclick="try{top.tb_remove();}catch(e){}; return false;"><?php _e( 'Cancel' ); ?></a>
+            </p>
+            <div class="clear"></div>
+        </div>
+
+        <div id="fileInfo"
+             style="display:none; margin:10px auto;padding:10px 10px 5px;overflow: hidden;border-radius:10px;-moz-border-radius: 10px;border: 1px solid #ccc;box-shadow: 0 0 5px #ccc;background-image: -moz-linear-gradient(top, #ff9900, #c77801);background-image: -webkit-gradient(linear, left top, left bottom, from(#ff9900), to(#c77801));">
+            <ul style="margin:0;">
+                <li id="fileName"></li>
+                <li id="fileSize"></li>
+                <li id="fileType"></li>
+            </ul>
+        </div>
+
+
+        <span class="max-upload-size"><?php printf( __( 'Maximum upload file size: %d%s.' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) ); ?></span>
+		<?php
+		if ( ( $is_IE || $is_opera ) && $max_upload_size > 100 * 1024 * 1024 ) { ?>
+            <span class="big-file-warning"><?php _e( 'Your browser has some limitations uploading large files with the multi-file uploader. Please use the browser uploader for files over 100MB.' ); ?></span>
+		<?php }
+
 	}
 
 	public static function media_upload_type_form_upyun( $type = 'file', $errors = null, $id = null ) {
@@ -398,7 +476,7 @@ class hacklogra_upyun {
                 <br/>
 				<?php _e( 'This page was designed for uploading big files to UpYun Server.', self::textdomain ); ?>
             </p>
-			<?php hacklogra_upyun_media_upload_form( $errors ); ?>
+			<?php self::hacklogra_upyun_media_upload_form( $errors ); ?>
 
             <script type="text/javascript">
                 //<![CDATA[
@@ -626,6 +704,41 @@ class hacklogra_upyun {
 				add_filter( 'wp_update_attachment_metadata', array( __CLASS__, 'upload_images' ), 999 );
 				//删除远程附件
 				add_action( 'wp_delete_file', array( __CLASS__, 'delete_remote_file' ) );
+				add_filter('media_upload_tabs', function($tags){ $tags['type_upyun'] = 'UPYUN'; return $tags;});
+				add_filter('media_upload_form_url', function($form_action_url, $type) {
+				    if ('upyun' == $type) {
+				        self::$tab_type_is_upyun = true;
+				        return 'http://v1.api.upyun.com/ihacklog-files/';
+				    } else {
+					    self::$tab_type_is_upyun = false;
+				        return $form_action_url;
+				    }
+				}, -999, 2);
+				add_filter('plupload_init', function($plupload_init){
+				    if (self::$tab_type_is_upyun){
+				        $plupload_init['file_data_name'] = 'file';
+					    $plupload_init['url'] = 'http://v1.api.upyun.com/ihacklog-files/';
+                    }
+                    return $plupload_init;
+                });
+				add_filter('upload_post_params', function($post_params){
+					$post_id         = isset($_POST['post_id']) ? $_POST['post_id'] : '';
+					$filename        = 'wp_' . date('Y-m-dHis'). '_' . mt_rand(10000,99999);
+					$unique_filename = self::unique_filename( self::$rest_remote_path . self::$subdir, $filename );
+					$policy          = self::$fs->build_policy(
+						array(
+							'path'       => '/' . self::$rest_remote_path . self::$subdir . '/' . $unique_filename,
+							'return_url' => admin_url( 'media-upload.php?tab=type_upyun&post_id=' . $post_id, HACKLOG_RA_UPYUN_LOADER ),
+							'bucket'     => self::$bucketname,
+						) );
+					$signature       = self::$fs->get_form_api_signature( $policy );
+					$post_params['policy'] = $policy;
+					$post_params['signature'] = $signature;
+					return $post_params;
+                });
+				add_action('media_upload_type_upyun', function(){
+					wp_iframe( 'media_upload_type_form', 'upyun');
+				});
 				break;
 		}
 	}
