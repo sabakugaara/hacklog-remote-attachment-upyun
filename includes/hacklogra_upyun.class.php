@@ -706,6 +706,7 @@ class hacklogra_upyun {
 				add_filter( 'wp_calculate_image_srcset', array( __CLASS__, 'replace_attachurl_srcset' ), - 999, 5 );
                 add_filter( 'wp_prepare_attachment_for_js', array( __CLASS__, 'sign_attachment_for_js' ), - 999, 3 );
                 add_filter( 'image_send_to_editor', array( __CLASS__, 'before_image_send_to_editor' ), - 999, 8 );
+                add_filter( 'wp_get_attachment_image_attributes', array( __CLASS__, 'fix_media_list_sign' ), - 999, 3);
 				add_filter( 'attachment_link', array( __CLASS__, 'replace_baseurl' ), - 999 );
 				//生成缩略图后立即上传生成的文件并删除本地文件,this must after watermark generate
 				add_filter( 'wp_update_attachment_metadata', array( __CLASS__, 'upload_images' ), 999 );
@@ -869,6 +870,20 @@ class hacklogra_upyun {
             return self::sign_post_url($html);
         }
 
+    }
+
+
+    /**
+     * //wp_get_attachment_image_attributes
+     * @param $attr
+     * @param $attachment
+     * @param $size
+     */
+    public static function fix_media_list_sign($attr, $attachment, $size) {
+        if (isset($attr['src'])) {
+            $attr['src'] = self::sign_url( $attr['src'] );
+        }
+        return $attr;
     }
 
 	/**
