@@ -613,9 +613,11 @@ class hacklogra_upyun {
 	}
 
 	private static function sign_url( $url ) {
-		if ( '.' !== self::$http_remote_path ) {
+		if (!empty(self::$http_remote_path) && '.' !== self::$http_remote_path ) {
 			$baseurl = str_replace( '/' . self::$http_remote_path, '', self::$remote_baseurl );
-		}
+		} else {
+            $baseurl = self::$remote_baseurl;
+        }
 		$file_path  = substr( $url, strlen( $baseurl ) );
 		$signed_url = $baseurl . '/' . self::$fs->set_anti_leech_token_sign_uri( $file_path );
 
@@ -702,6 +704,8 @@ class hacklogra_upyun {
 				add_filter( 'wp_handle_upload', array( __CLASS__, 'upload_and_send' ) );
 				add_filter( 'media_send_to_editor', array( __CLASS__, 'replace_attachurl' ), - 999 );
 				add_filter( 'wp_calculate_image_srcset', array( __CLASS__, 'replace_attachurl_srcset' ), - 999, 5 );
+                add_filter( 'wp_prepare_attachment_for_js', array( __CLASS__, 'sign_attachment_for_js' ), - 999, 3 );
+                add_filter( 'image_send_to_editor', array( __CLASS__, 'before_image_send_to_editor' ), - 999, 8 );
 				add_filter( 'attachment_link', array( __CLASS__, 'replace_baseurl' ), - 999 );
 				//生成缩略图后立即上传生成的文件并删除本地文件,this must after watermark generate
 				add_filter( 'wp_update_attachment_metadata', array( __CLASS__, 'upload_images' ), 999 );
@@ -827,6 +831,46 @@ class hacklogra_upyun {
 		return $html;
 	}
 
+    /**
+     * //apply_filters( 'wp_prepare_attachment_for_js', $response, $attachment, $meta );
+     * wp_prepare_attachment_for_js
+     * @param $a
+     * @param $b
+     */
+	public static function sign_attachment_for_js($response, $attachment, $meta) {
+	    if ($response['sizes']) {
+	        foreach($response['sizes'] as $size_key => $thumb) {
+	            if (!empty($thumb['url']) && ! empty( self::$anti_leech_token )) {
+                    $response['sizes'][$size_key]['url'] = self::sign_url( $thumb['url'] );
+                }
+            }
+        }
+        return $response;
+    }
+
+
+    /***
+     * //apply_filters( 'image_send_to_editor', $html, $id, $caption, $title, $align, $url, $size, $alt )
+     * @param $html
+     * @param $id
+     * @param $caption
+     * @param $title
+     * @param $align
+     * @param $url
+     * @param $size
+     * @param $alt
+     */
+    public function before_image_send_to_editor($html, $id, $caption, $title, $align, $url, $size, $alt) {
+        if (!empty($url)) {
+            $url_orig = $url;
+            $url = self::sign_url( $url );
+            return str_replace($url_orig, $url, $html);
+        } else {
+            return self::sign_post_url($html);
+        }
+
+    }
+
 	/**
 	 * @param $sources
 	 * @param $size_array
@@ -846,6 +890,15 @@ class hacklogra_upyun {
 		}
 		foreach ( (array) $sources as $index => $source ) {
 			$sources[ $index ]['url'] = str_replace( $local_url, self::$remote_url, $source['url'] );
+
+            if ( ! empty( self::$anti_leech_token )) {
+                    self::setup_rest();
+                    //the determine should be here ,not sign_url function
+                    if ( self::$fs->is_url_token_signed( $sources[ $index ]['url'] ) ) {
+                        continue;
+                    }
+                    $sources[ $index ]['url'] = self::sign_url( $sources[ $index ]['url'] );
+            }
 		}
 
 		return $sources;
@@ -861,7 +914,7 @@ class hacklogra_upyun {
 	 */
 	public static function replace_baseurl( $url ) {
 		$url = str_replace( self::$local_baseurl, self::$remote_baseurl, $url );
-		! empty( self::$anti_leech_token ) && ! is_admin() && self::setup_rest() && $url = self::sign_url( $url );
+		! empty( self::$anti_leech_token ) && self::setup_rest() && $url = self::sign_url( $url );
 
 		return $url;
 	}
@@ -910,7 +963,7 @@ class hacklogra_upyun {
 		$remote_subdir = dirname( $remotefile );
 		$remote_subdir = str_replace( '\\', '/', $remote_subdir );
 
-		$file['url'] = str_replace( self::$local_url, self::$remote_url, $file['url'] );
+		$file['url'] = str_replace( self::$local_url, self::$remote_url, $file['url'] ) . '?_upt_stub_0xdeadbeef';
 		//如果是图片，此处不处理，因为要与水印插件兼容的原因　
 		if ( self::is_image_file( $file['file'] ) ) {
 			//对xmlrpc 这里又给它还原
