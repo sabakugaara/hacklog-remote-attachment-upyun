@@ -634,9 +634,9 @@ class hacklogra_upyun {
 				self::setup_rest();
 				foreach ( $urls as $url ) {
 					//the determine should be here ,not sign_url function
-					if ( self::$fs->is_url_token_signed( $url ) ) {
+/*					if ( self::$fs->is_url_token_signed( $url ) ) {
 						continue;
-					}
+					}*/
 					$signed_url = self::sign_url( $url );
 					$content    = str_replace( $url, $signed_url, $content );
 				}
@@ -974,7 +974,7 @@ class hacklogra_upyun {
 		}
 		$localfile = $file['file'];
 		//file path on remote server
-		$remotefile    = self::$rest_remote_path . self::$subdir . '/' . $local_basename_unique;
+		$remotefile    = '/' . ltrim(self::$rest_remote_path, '/') . self::$subdir . '/' . $local_basename_unique;
 		$remote_subdir = dirname( $remotefile );
 		$remote_subdir = str_replace( '\\', '/', $remote_subdir );
 
@@ -1065,7 +1065,7 @@ class hacklogra_upyun {
 	private static function upload_file( $relative_path ) {
 		$local_filepath = self::$local_basepath . DIRECTORY_SEPARATOR . $relative_path;
 		$local_basename = basename( $local_filepath );
-		$remotefile     = self::$rest_remote_path . self::$subdir . '/' . $local_basename;
+		$remotefile     = '/' . ltrim(self::$rest_remote_path, '/') . self::$subdir . '/' . $local_basename;
 		$file_data      = file_get_contents( $local_filepath );
 		if ( ! self::$fs->put_contents( $remotefile, $file_data, true ) ) {
 			return false;
