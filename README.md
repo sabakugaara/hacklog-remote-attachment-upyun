@@ -1,6 +1,6 @@
 # Wordpress-plugin-for-UPYUN
 
-##WordPress插件信息
+## WordPress插件信息
 
 ### Hacklog Remote Attachment Upyun
 
@@ -12,6 +12,11 @@
 * Requires at least: 3.3
 * Tested up to: 4.7.5
 * Stable tag: 1.5.4
+
+Notice: 
+oken 防盗链在最新的开发版中已经修复。
+下载链接：
+https://github.com/ihacklog/hacklog-remote-attachment-upyun/archive/master.zip
 
 ------------------------------------------------------------
 此插件用于为你的WP博客添加Upyun附件上传支持。
