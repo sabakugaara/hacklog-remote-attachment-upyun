@@ -14,7 +14,7 @@
 * Stable tag: 1.5.4
 
 Notice: 
-oken 防盗链在最新的开发版中已经修复。
+token 防盗链在最新的开发版中已经修复。
 下载链接：
 https://github.com/ihacklog/hacklog-remote-attachment-upyun/archive/master.zip
 
