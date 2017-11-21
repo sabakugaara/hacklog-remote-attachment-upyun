@@ -291,10 +291,10 @@ msgstr "远程基本URL"
 #: includes/hacklogra_upyun.class.php:1233
 msgid ""
 "Remote base URL,the URL to your bucket root path.for example: <strong>http://"
-"xxx.b0.upaiyun.com</strong>."
+"xxx.test.upcdn.net</strong>."
 msgstr ""
 "远程基本URL，即到你的bucket根目录的URL，结尾不要带<strong>/</strong>。如： "
-"<strong>http://xxx.b0.upaiyun.com</strong>"
+"<strong>http://xxx.test.upcdn.net</strong>"
 
 #: includes/hacklogra_upyun.class.php:1237
 msgid "rest Remote path"

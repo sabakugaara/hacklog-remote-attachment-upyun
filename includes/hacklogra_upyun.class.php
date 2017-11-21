@@ -1442,7 +1442,7 @@ class hacklogra_upyun {
                             <input name="remote_baseurl" type="text" class="regular-text" size="60" id="remote_baseurl"
                                    value="<?php echo self::get_opt( 'remote_baseurl' ); ?>"/>
                             <span
-                                    class="description"><?php _e( 'Remote base URL,the URL to your bucket root path.for example: <strong>http://xxx.b0.upaiyun.com</strong>.', self::textdomain ); ?></span>
+                                    class="description"><?php _e( 'Remote base URL,the URL to your bucket root path.for example: <strong>http://xxx.test.upcdn.net</strong>.', self::textdomain ); ?></span>
                         </td>
                     </tr>
                     <tr valign="top">
